@@ -136,7 +136,7 @@
         
     <h3 class="post-title">
     	<a href="https://cpu887.coding.me/cpu887.coding.me/2018/03/25/hello-world/">
-    		Hello World
+    		coding.net码市搭建博客（基于Hexo）
     	</a>
     </h3>
 
@@ -154,15 +154,34 @@
     <div class="post-content">
         <div class="post-excerpt">
             
-                <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+                <p>参考网站：</p>
+<p>Hexo官方中文网<br>码市coding.net<br>文章所有命令都是在root用户下进行</p>
+<p>一、创建项目<br>项目名称必须要和用户名相同，不然会加载不出来样式</p>
+<p>这里写图片描述</p>
+<p>二、使用WebIDE<br>跳转到WebIDE 新建工作空间<br>这里写图片描述</p>
+<p>同步仓库之后选择刚才创建的仓库<br>这里写图片描述</p>
+<p>创建工作空间<br>这里写图片描述</p>
+<p>运行工作空间<br>这里写图片描述</p>
+<p>右侧的运行环境选择nodejs<br>这里写图片描述</p>
+<p>点击下侧的终端<br>这里写图片描述</p>
+<p>查看node和npm的版本，Linux版本号：<br>node -v<br>npm -v<br>cat /proc/version<br>这里写图片描述</p>
+<p>切换到root用户,安装 Hexo<br>sudo su<br>npm install hexo-cli -g（此过程大概需要五分钟）<br>安装成功<br>这里写图片描述</p>
+<p>创建一个文件夹用于存放文章与hexo配置文件<br>mkdir hexo<br>这里写图片描述</p>
+<p>然后完成初始化工作(此过程大概需要五分钟)<br>cd hexo<br>hexo init<br>这里写图片描述<br>初始化之后的目录结构：<br>这里写图片描述</p>
+<p>安装npm依赖包，运行命令(在/hexo目录下)<br>cd hexo<br>npm install<br>这里写图片描述</p>
+<p>接下来将静态页推送到托管平台上<br>安装hexo git插件，在hexo目录下运行命令<br>cd hexo<br>npm install hexo-deployer-git –save (此过程大概需要三分钟)</p>
+<p>这里写图片描述</p>
+<p>打开_config.yml文件，修改一下最下面的deploy：<br>这里写图片描述</p>
+<p>改为</p>
+<p>deploy:<br>type: git<br>repo: https://用户名:密码@仓库地址<br>branch: master<br>message: blog update</p>
+<p>我的仓库地址：git.coding.net/dibage/dibage.git</p>
+<p>然后推送到coding.net<br>hexo d</p>
+<p>接下来就可以在项目的代码托管页看到推送过来的文件了<br>这里写图片描述</p>
+<p>这里写图片描述</p>
+<p>选择“Pages服务”<br>这里写图片描述</p>
+<p>选择静态pages部署来源选择“master分支”<br>这里写图片描述</p>
+<p>这里写图片描述</p>
+<p>部署成功之后打开链接就可以正常访问了<br>这里写图片描述</p>
 
             
             <p class="more">
@@ -170,7 +189,7 @@
             </p>
         </div>
         <div class="post-thumbnail" data-img="">
-            <a href="https://cpu887.coding.me/cpu887.coding.me/2018/03/25/hello-world/" title="Hello World">
+            <a href="https://cpu887.coding.me/cpu887.coding.me/2018/03/25/hello-world/" title="coding.net码市搭建博客（基于Hexo）">
                 
                     <img class="thumbnail" src="/img/default.png" data-echo="/img/thumbnail/5.jpg" alt="默认配图" >
                 
