@@ -1,110 +1,179 @@
-<!doctype html>
-<html lang="zh-CN">
+<!DOCTYPE HTML>
+<html lang="zh-Hans">
 <head>
-    <meta charset="UTF-8" >
-    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
-    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
-    
-    <title>面试之 - Socket网络编程，TCP/IP和Http等网络协议理解 | 阿俊的技术博客</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
-    <meta name="keywords" content="罗连喜, 大数据, ArJun, iOS, Java, 移动开发" >
-    <meta name="description" content="罗连喜的个人博客" >
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="阿俊的技术博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="https://cpu887.coding.me/cpu887.coding.me">
+    <!--SEO-->
+
+
+
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+
+<title>面试之 - Socket网络编程，TCP/IP和Http等网络协议理解 | 阿俊的技术博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="阿俊的技术博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
 
     
-    <link rel="alternative" href="/atom.xml" title="阿俊的技术博客" type="application/atom+xml" >
-    
-    
-    <link rel="shortcut icon" href="/favicon.ico" >
-    
-    <link rel="stylesheet" href="/css/style.css">
-    <!--[if lt IE 9]>
-    <script src="/js/html5.js"></script>
-    <![endif]-->
-    
-<script>
-    var _hmt = _hmt || [];
-    (function() {
-        var hm = document.createElement("script");
-        hm.src = "//hm.baidu.com/hm.js?fd459238242776d173cdc64918fb32f2";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-</script>
 
+
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.5.0">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+	<div class="hide">
+		<script type="text/javascript">
+			var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+	</div>
+
+
+
+
+
+
+    
 
 </head>
 
-<body class="home">
-    <!--[if lt IE 9]>
-    <div class="browsehappy">
-        当前网页 <strong>不支持</strong>
-        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://snippet.shenliyang.com/img/banner.jpg)"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='ChinaArJun'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                 <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+    	</div>
     </div>
-    <![endif]-->
-
-    <!-- 博客头部 -->
-    <header class="header">
-    <section class="container header-main">
-        <div class="logo">
-            <a href="/">
-                <div class="cover">
-                    <span class="name">阿俊的技术博客</span>
-                    <span class="description">Bug终结者</span>
-                </div>
-            </a>
-        </div>
-        <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
-        <ul class="menu hidden" id="JELON__menu">
-            
-            <li rel="/2018/03/25/01ios-Job-interview/index.html" class="item ">
-                <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
-            </li>
-            
-        </ul>
-        <div class="profile clearfix">
-            <div class="feeds fl">
-                
-                
-                <p class="links">
-                    
-                        <a href="https://github.com/ChinaArJun" target="_blank">Github</a>
-                        |
-                    
-                        <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
-                        
-                    
-                </p>
-                <p class="sns">
-                    
-                        <a href="https://www.jianshu.com/u/f5a7b66b1a03" class="sinaweibo" target="_blank"><b>■</b> 简书</a>
-                    
- 
-                </p>
-                
-            </div>
-            <div class="avatar fr">
-                <img src="/img/arjun.jpg" alt="avatar" title="Jelon" >
-            </div>
-        </div>
-    </section>
 </header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="https://cpu887.coding.me/cpu887.coding.me">阿俊的技术博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>Home</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>时间轴</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="面试之 - Socket网络编程，TCP/IP和Http等网络协议理解">
+            
+	            面试之 - Socket网络编程，TCP/IP和Http等网络协议理解
+            
+        </h1>
+        <div class="post-meta">
+    
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        <a href="/categories/ ">
+             
+        </a>
+    </span>
+    
 
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+                
+            
+        </span>
+    </span>
+    
 
-    <!-- 博客正文 -->
-    <div class="container body clearfix">
-        <section class="content">
-            <div class="content-main widget">
-                <!-- 文章页 -->
-<!-- 文章 -->
-<article class="post article">
-    <header class="text-center">
-        <h3 class="post-title"><span>面试之 - Socket网络编程，TCP/IP和Http等网络协议理解</span></h3>
-    </header>
-    <p class="post-meta text-center">
-        Jelon 发表于
-        <time datetime="2018-03-24T16:03:14.610Z">2018-03-25</time>
-    </p>
-    <div class="post-content">
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2018/03/25</span>
+        </span>
+        
+    
+</div>
+
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
         <p>面试之 - Socket网络编程，TCP/IP和Http等网络协议理解</p>
 <h4 id="一、网络各个协议：TCP-IP、SOCKET、HTTP等"><a href="#一、网络各个协议：TCP-IP、SOCKET、HTTP等" class="headerlink" title="一、网络各个协议：TCP/IP、SOCKET、HTTP等"></a>一、网络各个协议：TCP/IP、SOCKET、HTTP等</h4><p>网络七层由下往上分别为物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br>其中物理层、数据链路层和网络层通常被称作媒体层，是网络工程师所研究的对象；<br>传输层、会话层、表示层和应用层则被称作主机层，是用户所面向和关心的内容。<br>http协议   对应于应用层<br>tcp协议    对应于传输层<br>ip协议     对应于网络层<br>三者本质上没有可比性。  何况HTTP协议是基于TCP连接的。<br>TCP/IP是传输层协议，主要解决数据如何在网络中传输；而HTTP是应用层协议，主要解决如何包装数据。<br>我 们在传输数据时，可以只使用传输层（TCP/IP），但是那样的话，由于没有应用层，便无法识别数据内容，如果想要使传输的数据有意义，则必须使用应用层 协议，应用层协议很多，有HTTP、FTP、TELNET等等，也可以自己定义应用层协议。WEB使用HTTP作传输层协议，以封装HTTP文本信息，然 后使用TCP/IP做传输层协议将它发送到网络上。Socket是对TCP/IP协议的封装，Socket本身并不是协议，而是一个调用接口（API），通过Socket，我们才能使用TCP/IP协议。</p>
 <h4 id="二、Http和Socket连接区别"><a href="#二、Http和Socket连接区别" class="headerlink" title="二、Http和Socket连接区别"></a>二、Http和Socket连接区别</h4><p>相信不少学习手机联网开发的朋友都接触过Http与Socket连接,究竟他们有什么区别,这边浅谈下个人理解。</p>
@@ -120,187 +189,136 @@
 <h5 id="3-3、SOCKET连接与TCP连接"><a href="#3-3、SOCKET连接与TCP连接" class="headerlink" title="3.3、SOCKET连接与TCP连接"></a>3.3、SOCKET连接与TCP连接</h5><p>协议相当于相互通信的程序间达成的一种约定，它规定了分组报文的结构、交换方式、包含的意义以及怎样对报文所包含的信息进行解析TCP/IP 协议族有 IP 协议、TCP 协议和 UDP 协议。现在 TCP/IP 协议族中的主要 socket 类型为流套接字（使用 TCP 协议）和数据报套接字（使用 UDP 协议）。TCP 协议提供面向连接的服务，通过它建立的是可靠地连接。Java 为 TCP 协议提供了两个类：Socke 类和 ServerSocket 类。一个 Socket 实例代表了 TCP 连接的一个客户端，而一个 ServerSocket 实例代表了 TCP连接的一个服务器端，一般在 TCP Socket 编程中，客户端有多个，而服务器端只有一个，客户端 TCP 向服务器端 TCP 发送连接请求，服务器端的 ServerSocket 实例则监听来自客户端的 TCP 连接请求，并为每个请求创建新的 Socket 实例，由于服务端在调用 accept（）等待客户端的连接请求时会阻塞，直到收到客户端发送的连接请求才会继续往下执行代码，因此要为每个 Socket 连接开启一个线程。服务器端要同时处理 ServerSocket 实例和 Socket 实例，而客户端只需要使用 Socket 实例。另外，每个 Socket 实例会关联一个 InputStream和 OutputStream 对象，我们通过将字节写入套接字的 OutputStream 来发送数据，并通过从 InputStream 来接收数据。<br>客户端向服务器端发送连接请求后，就被动地等待服务器的响应。</p>
 
     </div>
-    <p class="post-meta">
-        <span class="post-cat">分类：
+    
+        <div class="reward">
+    <div class="reward-wrap">赏
+        <div class="reward-box">
             
-        </span>
-        <span class="post-tags">
-            标签：
             
-        </span>
-    </p>
+                <span class="reward-type">
+                    <img class="wechat" src="../img/reward-wepay.jpg"><b>微信打赏</b>
+                </span>
+            
+        </div>
+    </div>
+    <p class="reward-tip">赞赏是不耍流氓的鼓励</p>
+</div>
+
+
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="" target="_blank">Snippet</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
 </article>
-<!-- 分享按钮 -->
 
-  <div class="article-share clearfix text-center">
-    <div class="share-area">
-      <span class="share-txt">分享到：</span>
-      <a href="javascript: window.open('http://service.weibo.com/share/share.php?url=' + encodeURIComponent(location.href) + '&title=' + document.title + '&language=zh_cn');" class="share-icon weibo"></a>
-      <a href="javascript: alert('请复制链接到微信并发送');" class="share-icon wechat"></a>
-      <a href="javascript: window.open('http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + encodeURIComponent(location.href) + '&title=' + document.title);" class="share-icon qqzone"></a>
-      <a href="javascript: window.open('http://connect.qq.com/widget/shareqq/index.html?url=' + encodeURIComponent(location.href) + '&desc=Jelon个人博客&title=' + document.title + '&callback=' + encodeURIComponent(location.href));" class="share-icon qq"></a>
-      <a href="javascript: window.open('http://shuo.douban.com/!service/share?href=' + encodeURIComponent(location.href) + '&name=' + document.title + '&text=' + document.title);" class="share-icon douban"></a>
-    </div>
-  </div>
-
-
-<!-- 上一篇/下一篇 -->
-
-<div class="article-nav clearfix">
+<div class="article-nav prev-next-wrap clearfix">
     
-    <span class="prev fl">
-        上一篇<br >
-        <a href="javascript: void(0);">没有上一篇了</a>
-    </span>
-    
-
-    
-    <span class="next fr">
-        下一篇<br >
-        <a href="/2018/03/25/02web解决Mac版本 Sublime text3安装Package Control问题/">
-            
-                解决Mac版本 Sublime text3安装Package Control问题
-            
+        <a href="/2018/03/25/02web解决Mac版本 Sublime text3安装Package Control问题/" class="pre-post btn btn-default" title='解决Mac版本 Sublime text3安装Package Control问题'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">解决Mac版本 Sublime text3安装Package Control问题</span>
         </a>
-    </span>
+    
     
 </div>
 
-<!-- 文章评论 -->
 
-  <script src="/js/comment.js"></script>
-  <div id="comments" class="comment">
-    <!--
-    <div class="sign-bar">
-      GitHub 已登录!
-      <span class="sign-link">登出</span>
+    <div id="comments">
+        
+    
+    <div id="vcomments" class="valine"></div>
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+
+    <script>
+        new Valine({
+            av: AV,
+            el: '#vcomments',
+            appId: 'xOKV9J4UeQAtVkvnJC7Kq2Jn-gzGzoHsz',
+            appKey: 'erIpQac4azoCmgfBB7Dl9maa',
+            placeholder: '说点什么吧',
+            notify: false,
+            verify: false,
+            avatar: 'mm',
+            meta: 'nick,mail'.split(','),
+            pageSize: '10',
+            path: window.location.pathname,
+            lang: 'zh-Hans'.toLowerCase()
+        })
+    </script>
+
+
     </div>
-    <section class="box">
-      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
-      <div class="com-text">
-        <div class="main">
-          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
-          <div class="text-area-preview"></div>
-        </div>
-        <div class="switch">
-          <div class="switch-item on">编辑</div>
-          <div class="switch-item">预览</div>
-        </div>
-        <div class="button">提交</div>
-      </div>
-    </section>
-    <section class="tips">注：评论支持 markdown 语法！</section>
-    <section class="list-wrap">
-      <ul class="list">
-        <li>
-          <div class="user-avatar">
-            <a href="/">
-              <img src="/img/jelon.jpg" alt="user-avatar">
-            </a>
-          </div>
-          <div class="user-comment">
-            <div class="user-comment-header">
-              <span class="post-name">张德龙</span>
-              <span class="post-time">2017年12月12日</span>
-              <span class="like liked">已赞</span>
-              <span class="like-num">2</span>
-            </div>
-            <div class="user-comment-body">333333</div>
-          </div>
-        </li>
-        <li>
-          <div class="user-avatar">
-            <a href="/">
-              <img src="/img/jelon.jpg" alt="user-avatar">
-            </a>
-          </div>
-          <div class="user-comment">
-            <div class="user-comment-header">
-              <span class="post-name">刘德华</span>
-              <span class="post-time">2017年12月12日</span>
-              <span class="like">点赞</span>
-              <span class="like-num">2</span>
-            </div>
-            <div class="user-comment-body">vvvvv</div>
-          </div>
-        </li>
-      </ul>
-      <div class="page-nav">
-        <a href="javascript: void(0);" class="item">1</a>
-        <a href="javascript: void(0);" class="item">2</a>
-        <a href="javascript: void(0);" class="item current">3</a>
-      </div>
-    </section>
-    -->
-  </div>
-  <script>
-  JELON.Comment({
-    container: 'comments',
-    label: '01ios-Job-interview' || '2018/03/25/01ios-Job-interview/',
-    owner: 'jangdelong',
-    repo: 'blog_comments',
-    clientId: 'b08ed25e52c57993e69c',
-    clientSecret: '1cb9545488f0380904b87350e7c5a270ae03bab7'
-  });
-  </script>
 
 
-            </div>
 
-        </section>
-        <!-- 侧栏部分 -->
-<aside class="sidebar">
-    <section class="widget">
-        <h3 class="widget-hd"><strong>文章分类</strong></h3>
-        <!-- 文章分类 -->
-<ul class="widget-bd">
-    
-</ul>
-    </section>
 
-    
-    <section class="widget">
-        <h3 class="widget-hd"><strong>热门标签</strong></h3>
-        <!-- 文章标签 -->
-<div class="widget-bd tag-wrap">
-  
-</div>
-    </section>
-    
 
-    
-
-    
-    <!-- 友情链接 -->
-    <section class="widget">
-        <h3 class="widget-hd"><strong>友情链接</strong></h3>
-        <!-- 文章分类 -->
-<ul class="widget-bd">
-    
-        <li>
-            <a href="http://blog.6ag.com" target="_blank" title="6阿哥技术博客">6阿哥</a>
-        </li>
-    
-</ul>
-    </section>
-    
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">Table of Contents</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#一、网络各个协议：TCP-IP、SOCKET、HTTP等"><span class="toc-text">一、网络各个协议：TCP/IP、SOCKET、HTTP等</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#二、Http和Socket连接区别"><span class="toc-text">二、Http和Socket连接区别</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1、TCP连接"><span class="toc-text">2.1、TCP连接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1-1-TCP-连接的建立步骤"><span class="toc-text">2.1.1 TCP 连接的建立步骤</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2、HTTP连接"><span class="toc-text">2.2、HTTP连接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-1、套接字（socket）概念"><span class="toc-text">3.1、套接字（socket）概念</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-2-、建立socket连接"><span class="toc-text">3.2 、建立socket连接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-3、SOCKET连接与TCP连接"><span class="toc-text">3.3、SOCKET连接与TCP连接</span></a></li></ol></li></ol>
+        
+    </div>
 </aside>
-<!-- / 侧栏部分 -->
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
     </div>
-
-    <!-- 博客底部 -->
-    <footer class="footer">
-    &copy;
-    
-        2016-2018
-    
-
-    <a href="/">Jelon Loves You</a>
 </footer>
-<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
 
-    <!--博客js脚本 -->
-    <!-- 这里放网站js脚本 -->
-<script src="/js/main.js"></script>
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2017
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
 </body>
 </html>
