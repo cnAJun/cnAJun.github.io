@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.png?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Swagger UI关于Swagger UI官方解释是这样的：The Swagger UI is an open source project to visually render documentation for a Swagger defined API directly from the API’s Swagger specifcation 官网地址 下面是官方的效果图： 我将上图分成了两">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA【SpringMVC+Swagger UI生成可视图的API文档（详细图解）】">
+<meta property="og:url" content="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【SpringMVC-Swagger-UI生成可视图的API文档（详细图解）】/index.html">
+<meta property="og:site_name" content="阿俊的博客">
+<meta property="og:description" content="Swagger UI关于Swagger UI官方解释是这样的：The Swagger UI is an open source project to visually render documentation for a Swagger defined API directly from the API’s Swagger specifcation 官网地址 下面是官方的效果图： 我将上图分成了两">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2692013-c212365ee2b499e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2692013-c6eb0011d61f0be0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-11-29T14:05:45.031Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JAVA【SpringMVC+Swagger UI生成可视图的API文档（详细图解）】">
+<meta name="twitter:description" content="Swagger UI关于Swagger UI官方解释是这样的：The Swagger UI is an open source project to visually render documentation for a Swagger defined API directly from the API’s Swagger specifcation 官网地址 下面是官方的效果图： 我将上图分成了两">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/2692013-c212365ee2b499e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【SpringMVC-Swagger-UI生成可视图的API文档（详细图解）】/"/>
+
+
+
+
+
+  <title>JAVA【SpringMVC+Swagger UI生成可视图的API文档（详细图解）】 | 阿俊的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿俊的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">bug终结者</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【SpringMVC-Swagger-UI生成可视图的API文档（详细图解）】/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChinaArJun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JAVA【SpringMVC+Swagger UI生成可视图的API文档（详细图解）】</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:05:44+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Swagger UI<br>关于Swagger UI官方解释是这样的：<strong><em>The Swagger UI is an open source project to visually render documentation for a Swagger defined API directly from the API’s Swagger specifcation</em></strong> <a href="http://swagger.io/" target="_blank" rel="noopener">官网地址</a> 下面是官方的效果图：<br><img src="http://upload-images.jianshu.io/upload_images/2692013-c212365ee2b499e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="5F19E5D5-9FB4-45A0-BBF8-613E2014A5C1.png"></p>
+<p>我将上图分成了两部分<br>文档地址：从改地址请求数据，获取JSON格式数据，交给第二步显示<br>API文档显示：将JSON数据转化成可视图的效果</p>
+<p><strong>Swagger可以将某种固定格式的JSON数据生成可以视图的在线API文档，支持在线<a href="http://lib.csdn.net/base/softwaretest" target="_blank" rel="noopener">测试</a>，可以清楚的观察到IO数据</strong>。<br>SpringMVC + Swagger<br>目的：在原有的SpringMVC系统中添加Swagger，通过在接口上添加注解实现，接口文档的同步效果。 下图为我实现之后的效果：<br><img src="http://upload-images.jianshu.io/upload_images/2692013-c6eb0011d61f0be0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="10B721C3-92EB-467F-B7A9-D1764CF96CA8.png"></p>
+<p>项目搭建<br>我的工具：Eclipse开发工具（安装<a href="http://lib.csdn.net/base/javaee" target="_blank" rel="noopener">spring</a>插件，当然也可以不要，就是麻烦点）,Maven，Tomcat，Internet访问，Chrome浏览器 1.创建Simple Spring Web Maven工程 右键New-&gt;Spring Project，选择对应类型，finish, 如下图：[图片上传中。。。（3）] 我的工程的结构，注意那两个配置文件，名称不重要，可以随便改，注意要对应好web.xml中的名称就行。[图片上传中。。。（4）] 想了想还是把三个配置文件贴出来吧。 web.xml<br>&lt;?xml version=”1.0” encoding=”ISO-8859-1”?&gt;<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemalocation="http://java.sun.com/xml/ns/javaeehttp://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5"> <display-name>SwaggerDemo</display-name> <!-- - Location of the XML file that defines the root application context. - Applied by ContextLoaderListener. --> <context-param> <param-name>contextConfigLocation</param-name> <param-value>classpath:spring/application-config.xml</param-value> </context-param> <listener> <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> </listener> <!-- - Servlet that dispatches request to registered handlers (Controller implementations). --> <servlet> <servlet-name>dispatcherServlet</servlet-name> <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> <init-param> <param-name>contextConfigLocation</param-name> <param-value>/WEB-INF/mvc-config.xml</param-value> </init-param> <load-on-startup>1</load-on-startup> </servlet> <servlet-mapping> <servlet-name>dispatcherServlet</servlet-name> <url-pattern>/</url-pattern> </servlet-mapping></web-app></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43</p>
+<p>application-config.xml<br>&lt;?xml version=”1.0” encoding=”UTF-8”?&gt;<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xsi:schemalocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- Uncomment and add your base-package here: <context:component-scan base-package="org.springframework.samples.service"/> --></beans></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13</p>
+<p>mvc-config.xml<br>&lt;?xml version=”1.0” encoding=”UTF-8”?&gt;<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context" xsi:schemalocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- Uncomment and your base-package here: <context:component-scan base-package="org.springframework.samples.web"/> --> &lt;mvc:annotation-driven /&gt; <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> <!-- Example: a logical view name of 'showMessage' is mapped to '/WEB-INF/jsp/showMessage.jsp' --> <property name="prefix" value="/WEB-INF/view/"> <property name="suffix" value=".jsp"> </property></property></bean></beans></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23</p>
+<p>这样配置到后面配置Swagger会出现无法自动注入的问题，后面再说，以上为工具自动生成的代码。<br>2.添加Swagger-Spring MVC包、JSON和jackson pom.xml文件中 properties标签里面添加jackson版本号</p>
+<p>&lt;version.jackson&gt;2.4.4&lt;/version.jackson&gt;</p>
+<p>1</p>
+<p>1</p>
+<p>dependencies标签中添加<br><!-- Swagger --> <dependency> <groupid>com.mangofactory</groupid> <artifactid>swagger-springmvc</artifactid> <version>0.9.5</version> </dependency> <!-- JSON --> <dependency> <groupid>net.sf.json-lib</groupid> <artifactid>json-lib</artifactid> <version>2.4</version> <classifier>jdk15</classifier> </dependency> <!-- JACKSON --> <dependency> <groupid>com.fasterxml.jackson.core</groupid> <artifactid>jackson-annotations</artifactid> <version>${version.jackson}</version> </dependency> <dependency> <groupid>com.fasterxml.jackson.core</groupid> <artifactid>jackson-databind</artifactid> <version>${version.jackson}</version> </dependency> <dependency> <groupid>com.fasterxml.jackson.core</groupid> <artifactid>jackson-core</artifactid> <version>${version.jackson}</version> </dependency></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29</p>
+<p>3.下面是重点，Swagger所有API文档都在这里存储，添加Swagger配置类 创建一个配置类MySwaggerConfig，添加私有成员SpringSwaggerConfig，set方法使用@Autowired注解自动注入，使用@Bean注解添加SwaggerSpringMvcPlugin，并使用自定义的ApiInfo，SwaggerConfig类需要添加@Configuration以及@EnableSwagger<br>package com.edu.xk;import org.springframework.beans.factory.annotation.Autowired;import org.springframework.context.annotation.Bean;import org.springframework.context.annotation.Configuration;import org.springframework.web.servlet.config.annotation.EnableWebMvc;import com.mangofactory.swagger.configuration.SpringSwaggerConfig;import com.mangofactory.swagger.models.dto.ApiInfo;import com.mangofactory.swagger.plugin.EnableSwagger;import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;@Configuration@EnableSwagger@EnableWebMvcpublic class MySwaggerConfig { private SpringSwaggerConfig springSwaggerConfig; /<strong> <em> Required to autowire SpringSwaggerConfig </em>/ @Autowired public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) { this.springSwaggerConfig = springSwaggerConfig; } /</strong> <em> Every SwaggerSpringMvcPlugin bean is picked up by the swagger-mvc </em> framework - allowing for multiple swagger groups i.e. same code base <em> multiple swagger resource listings. </em>/ @Bean public SwaggerSpringMvcPlugin customImplementation() { // 暂时不用过滤 /<em>return new SwaggerSpringMvcPlugin(this.springSwaggerConfig).apiInfo(apiInfo()).includePatterns(“.</em>pet.<em>“);</em>/ return new SwaggerSpringMvcPlugin(this.springSwaggerConfig).apiInfo(apiInfo()); } private ApiInfo apiInfo() { ApiInfo apiInfo = new ApiInfo( “My Apps API Title”, “My Apps API Description”, “My Apps API terms of service”, “My Apps API Contact Email”, “My Apps API Licence Type”, “My Apps API License URL” ); return apiInfo; }}</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52</p>
+<p>官方原话： <em>The @EnableSwagger annotation, in this example, enables swagger-springmvc out of the box. The generated swagger json Resource Listing is available at /api-docs</em> 4.添加Controller:WebServiceForCSS，Swagger文档在此处添加<br>package com.edu.xk.webservice;import javax.servlet.http.HttpServletRequest;import org.springframework.stereotype.Controller;import org.springframework.web.bind.annotation.RequestMapping;import org.springframework.web.bind.annotation.RequestMethod;import org.springframework.web.bind.annotation.RequestParam;import org.springframework.web.bind.annotation.ResponseBody;import com.edu.xk.model.User;import com.wordnik.swagger.annotations.ApiOperation;import com.wordnik.swagger.annotations.ApiParam;import net.sf.json.JSONObject;/*<em> </em> @moudle: WebServiceForCSS <em> @version:v1.0 </em> @Description: TODO <em> @author: xukai </em> @date: 2016年12月1日 下午5:37:30 <em> </em>/@Controllerpublic class WebServiceForCSS { @ResponseBody @RequestMapping(value = “getUserById”, method = RequestMethod.GET, produces = {“application/json; charset=utf-8”,”application/xml”}) @ApiOperation(value = “通过ID查询USER信息”, httpMethod = “GET”, notes = “暂无”) public String getUserById( @ApiParam(required = true, name = “id”, value = “ID”) @RequestParam(value = “id”) String id,HttpServletRequest request) { User user = new User(); user.setId(id); user.setName(“测试人员”); user.setAge(25); JSONObject object = JSONObject.fromObject(user); return object.toString(); }}</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42</p>
+<p>5.配置文件修改 context加载的时候需要配置的文件，此处配置文件为application-config.xml<br>&lt;mvc:annotation-driven /&gt; <!-- mvc-config.xml中的可以去掉 --> &lt;context:component-scan base-package=”com.edu”/&gt; <bean class="com.edu.xk.configer.SwaggerConfig"></bean></p>
+<p>1<br>2<br>3</p>
+<p>1<br>2<br>3</p>
+<p>6.下载Swagger UI组件 去官网下载Zip包，或者在github上下载也可以，需要将dist文件夹下的所有文件的复制到webapp目录下。<br>7.修改Project Properties 将jdk1.5换成最新的本地的jdk,对应的<a href="http://lib.csdn.net/base/java" target="_blank" rel="noopener">Java </a>complier也改为对应的，还有maven包依赖也需要添加，不然启动的时候会找不到ContextLoader.class。<br>8.添加拦截器，不然无法访问.html后缀文件，在web.xml中添加</p>
+<p><servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.jpg</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.png</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.gif</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.ico</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.js</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.css</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.html</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.xls</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.doc</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.json</url-pattern> </servlet-mapping> <!-- 字体相关 开始 --> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.eot</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.svg</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.ttf</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.woff</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>*.woff2</url-pattern> </servlet-mapping> <!-- 字体相关 结束 --> <welcome-file-list> <welcome-file>index.html</welcome-file> <welcome-file>index.htm</welcome-file> <welcome-file>index.jsp</welcome-file> <welcome-file>default.html</welcome-file> <welcome-file>default.htm</welcome-file> <welcome-file>default.jsp</welcome-file> </welcome-file-list></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52<br>53<br>54<br>55<br>56<br>57<br>58<br>59<br>60<br>61<br>62<br>63<br>64<br>65<br>66<br>67<br>68<br>69<br>70</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52<br>53<br>54<br>55<br>56<br>57<br>58<br>59<br>60<br>61<br>62<br>63<br>64<br>65<br>66<br>67<br>68<br>69<br>70</p>
+<p>运行项目，可以看到效果图： [图片上传中。。。（5）]可以看到，现在效果还是和官网上一样的。改为自己的API文档可以通过修改index.html中的url = “<a href="http://petstore.swagger.io/v2/swagger.json&quot;" target="_blank" rel="noopener">http://petstore.swagger.io/v2/swagger.json&quot;</a>;<br>或者直接修改访问的地址栏为：<a href="http://localhost:8080/SwaggerDemo/api-docs" target="_blank" rel="noopener">http://localhost:8080/SwaggerDemo/api-docs</a><br>原理分析<br>SpringMVC+Swagger其实就是在系统加载的时候，Swagger配置类去扫描所有添加注释的接口，并且储存起来通过下面地址进行访问，返回JSON数据，在前端界面显示出来 [图片上传中。。。（6）] 这里我在网上看到一个汉化的版本（<a href="http://blog.csdn.net/hel12he/article/details/46547863" target="_blank" rel="noopener">原效果</a>），下载了他工程，将他生成demo.json放入的我的工程中的webapp目录下，下面是效果图 [图片上传中。。。（7）]<br>遇到的问题<br>问题1：下载maven的jar包中途失败，工程会出错maven missing 解决方法：选中Project-&gt;右键maven-&gt;update project-&gt;选中Force update 如果此时依然有 missing的jar，按照 buildpath 提示的 jar包missing 路径，去 maven 本地仓库中对应位置（jar包后面有路径），删掉 该 jar 包的 xxx.lastUpdated 文件，之后，再重新执行 项目右键maven-&gt;update project<br>问题2：缺失jackson包会导致出现异常java.lang.NoClassDefFoundError: com/fasterxml/jackson/databind/ObjectMapper)<br>问题3：java.lang.ClassNotFoundException: org.springframework.web.util.Log4jConfigListen，因为工程没有引入maven中的jar包，解决办法：选中工程右键-&gt;Properties-&gt;Deployment Assembly-&gt;add-&gt;Java Build Path Entries-&gt;Maven Dependencies-&gt;OK<br>问题4：<strong>org.springframework.beans.factory.BeanCreationException</strong>，出现这个异常是因为SpringSwaggerConfig的私有成员RequestMappingHandlerMapping造成的，将&lt;mvc:annotation-driven /&gt;<br>放入到web.xml的context-param标签对应的配置文件application-config.xml中，完美解决，官网解释该标签作用为： <em>Required so swagger-springmvc can access spring’s RequestMappingHandlerMapping</em> 。<br>org.springframework.beans.factory.NoSuchBeanDefinitionException: Noqualifying bean of type[org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping]found for dependency [collection oforg.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping]:expected at least 1 bean which qualifies as autowire candidate forthis dependency. Dependency annotations:<a href="mailto:{@org.springframework.beans.factory.annotation.Autowired" target="_blank" rel="noopener">{@org.springframework.beans.factory.annotation.Autowired</a>(required=true)}</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</p>
+<p><a href="https://github.com/springfox/springfox/blob/v1.0.2/README.md" target="_blank" rel="noopener">Swagger UI开发帮助</a></p>
+<p>Swagger Editor</p>
+<p>反正顺路，顺便的Editor也写完，Editor个人感觉就是一个文档编辑器，感觉SosoApi还是好些。试着在Swagger官网下载了一个Swagger Editor跑着玩了玩.下载swagger-editor.zip，解压到Tomcat的webapps文件夹中，来看一下效果图 [图片上传中。。。（8）]Swagger UI结合Swagger Editor更好用，但是在线编辑那个太卡了，备份一个本地的，以备不时只需。Swagger UI<br>关于Swagger UI官方解释是这样的：<strong><em>The Swagger UI is an open source project to visually render documentation for a Swagger defined API directly from the API’s Swagger specifcation</em></strong> <a href="http://swagger.io/" target="_blank" rel="noopener">官网地址</a> 下面是官方的效果图： </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/29/Mac【下用OracleSQLDeveloper连接Windows虚拟机的Oracle数据库】/" rel="next" title="Mac【用OracleSQLDeveloper连接Windows虚拟机的Oracle数据库】">
+                <i class="fa fa-chevron-left"></i> Mac【用OracleSQLDeveloper连接Windows虚拟机的Oracle数据库】
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/29/JAVA【使用Mybatis-Generator自动生成Dao、Model、Mapping相关文件】/" rel="prev" title="JAVA【使用Mybatis-Generator自动生成Dao、Model、Mapping相关文件】">
+                JAVA【使用Mybatis-Generator自动生成Dao、Model、Mapping相关文件】 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">ChinaArJun</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ChinaArJun</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

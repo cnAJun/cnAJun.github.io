@@ -62,7 +62,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
 
 
-  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+  <link rel="mask-icon" href="/images/logo.png?v=5.1.4" color="#222">
 
 
 
@@ -249,7 +249,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/ios/">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/APP【移动动态化方案在蜂鸟的架构演进（含React-Native与Weex对比）】/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ChinaArJun">
@@ -268,7 +268,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/11/29/ios/" itemprop="url">ios</a></h1>
+                <a class="post-title-link" href="/2018/11/29/APP【移动动态化方案在蜂鸟的架构演进（含React-Native与Weex对比）】/" itemprop="url">APP【移动动态化方案在蜂鸟的架构演进（含React Native与Weex对比）】</a></h1>
         
 
         <div class="post-meta">
@@ -280,7 +280,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T16:56:13+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:07:44+08:00">
                 2018-11-29
               </time>
             
@@ -320,17 +320,141 @@
       
         
           
-            <p>简介<br>在线编辑和发布hexo博客。<br>github地址：<a href="https://github.com/jaredly/hexo-admin" target="_blank" rel="noopener">https://github.com/jaredly/hexo-admin</a></p>
-<p>安装<br>进入hexo源文件目录，执行命令：</p>
-<p>npm install –save hexo-admin<br>hexo server -d<br>open <a href="http://localhost:4000/admin/" target="_blank" rel="noopener">http://localhost:4000/admin/</a><br>配置<br>编辑根目录下：_config.yml文件，添加：</p>
-<p>admin:<br>  username: myfavoritename<br>  password_hash: be121740bf988b2225a313fa1f107ca1<br>  secret: a secret something<br>其中：<br>username为登录的用户名，password_hash为密码的bcrypt哈希值，secret用于使cookie安全,可以尽可能复杂。</p>
-<p>password_hash的生成<br>首先需安装模块：sudo npm install bcrypt-nodejs<br>执行：</p>
-<p>$ node</p>
-<blockquote>
-<p>const bcrypt = require(‘bcrypt-nodejs’)<br>bcrypt.hashSync(‘your_password’)<br>其中的your_password为登录密码。</p>
-</blockquote>
-<p>若部署到远程服务器，就可以使用：<a href="http://ip:4000/admin/进行访问，在线发布hexo博客。" target="_blank" rel="noopener">http://ip:4000/admin/进行访问，在线发布hexo博客。</a></p>
-<p>本片博客即是通过hexo-admin在线编辑并发布的。</p>
+            <h3 id="最近在准备学习一门跨平台语言时候表示很纠结，学习一门语言时间紧迫，-必须学到有用又适应市场的一门语言"><a href="#最近在准备学习一门跨平台语言时候表示很纠结，学习一门语言时间紧迫，-必须学到有用又适应市场的一门语言" class="headerlink" title="最近在准备学习一门跨平台语言时候表示很纠结，学习一门语言时间紧迫，   必须学到有用又适应市场的一门语言"></a>最近在准备学习一门跨平台语言时候表示很纠结，学习一门语言时间紧迫，   必须学到有用又适应市场的一门语言</h3><p>   直到看到这篇文章后就恍然大悟了，刚好饿了么也是一路采坑过来的，必须借鉴学习一下，说明最值得学习的还是阿里系Weex，体验什么的也比RN要好不少</p>
+<p>当下，移动动态化已经成为各大公司都回避不了的问题，产品的快速迭代对技术提出了更高的要求，而移动端的动态化方案也是层出不穷：Hypid、结构化 Native View、React Native、Weex，什么样的方案才是适合自己团队的呢？本文将分享饿了么蜂鸟团队在过去两年多业务快速增长过程中，移动动态化方面的实践和探索。</p>
+<h3 id="什么是移动动态化？"><a href="#什么是移动动态化？" class="headerlink" title="什么是移动动态化？"></a>什么是移动动态化？</h3><p>移动指的是移动端，包括安卓、iOS。动态化则是动态部署和逻辑下发到客户端的能力。移动动态最好的状态就是让移动应用和 Web 一样，想发就发！</p>
+<p>为什么移动端要强调动态化的能力？</p>
+<p>原因有如下三大点：</p>
+<pre><code>业务迭代太快。当下大部分团队都是敏捷开发的模式，即使两周做一次迭代，产品周期还是会觉得长，有些应用不能及时上线。
+
+应用市场审核慢。安卓基本当天发应用市场，当天就能够有更新。但 iOS 需要约 3-4 天来审核。假设有些功能需要定时上线，iOS 审核时间必须要考虑进去。
+
+用户升级周期长。统计表明，每一个安卓版本发布，一周内会有 70% 的用户更新，一个月其余用户才能陆续完成更新。
+</code></pre><p>移动动态化方案共性，有如下三点：</p>
+<pre><code>跨平台。
+
+布局。约定 DSL，保证渲染性能。
+
+逻辑。Android 和 iOS 必须共用解释器。
+</code></pre><h3 id="蜂鸟团队的现状与业务特点"><a href="#蜂鸟团队的现状与业务特点" class="headerlink" title="蜂鸟团队的现状与业务特点"></a>蜂鸟团队的现状与业务特点</h3><p>蜂鸟团队现状</p>
+<p>蜂鸟团队于 2014 年成立，初衷是为了承接饿了么的物流业务。随着时间推移，订单量从每日几千单到百万单，配速员也达到百万数量，服务品类涉及外卖、商超、鲜花、蛋糕、文件等，蜂鸟提供全时段配送，配送服务覆盖全国 1200 多个城市。</p>
+<p>蜂鸟团队的业务特点</p>
+<p>蜂鸟团队的业务主要有离散性和突发性两大特点，如下图：</p>
+<p>[图片上传中…(image-bdf201-1522679509307-23)]</p>
+<p>从业务曲线可以看到两个很明显的波峰，这是午、晚用餐时间。同时，如果运营方面配置一些活动，会导致这两个波峰徒增。所以，动态方案要想把这两个时间段服务好，必须要考虑流量陡增下的性能压力。</p>
+<h3 id="蜂鸟团队的技术特点和挑战"><a href="#蜂鸟团队的技术特点和挑战" class="headerlink" title="蜂鸟团队的技术特点和挑战"></a>蜂鸟团队的技术特点和挑战</h3><p>蜂鸟团队的技术特点和挑战，我主要分享重度依赖、网络环境复杂、重度使用和 28 定律这四个方面。</p>
+<p>重度依赖</p>
+<p>当前蜂鸟有众包、团队和送送三部分业务，右侧是一些功能展示，如下图：</p>
+<p><a href="http://s5.51cto.com/wyfs02/M02/9E/C6/wKioL1mWQijhiveCAADLUbLqxfc678.jpg" target="_blank" rel="noopener">[图片上传中…(image-a9c71a-1522679509305-22)]</a> </p>
+<p>这样的工具型应用，需要对 APP 有更强的控制、监控等能力。必要时还要做到强制更新。</p>
+<p>对应到动态方案的话，控制能力就需要动态方案必须具备动态降级的能力、监控能力，实时的性能监控和业务埋点监控。强制更新方面，动态方案必须做到用户无感知的热更新。</p>
+<p>网络环境复杂</p>
+<p>饿了么小哥，每天穿梭在大街小巷、地下商超，他们的网络环境非常不稳定。据统计，有近 25% 的用户请求还来自非 4G 环境。</p>
+<p>整体来说的网络环境复杂、信号差和 DNS 污染，那么动态方案就要解决 DNS 拦截、弱网环境下资源下发等问题。</p>
+<p>重度使用</p>
+<p>无论是下雨、下雪，还是发洪水大家都会叫饿了么。</p>
+<p>配送员在高峰期的运动曲线，如下图：</p>
+<p><a href="http://s1.51cto.com/wyfs02/M00/9E/C6/wKioL1mWQlqC5OOcAADG7ST6baA277.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>面对这样争分夺秒的准时达压力，如果动态方案不给力，会导致应用出现崩溃或卡顿，骑手必定不会有好的体验，甚至影响送餐时间。所以我们的动态方案一定要保证性能和稳定性。</p>
+<p>28定律</p>
+<p>相信很多公司的应用都符合类似 28 定律，蜂鸟也不例外。</p>
+<p>如下图，蜂鸟的 28 定律：</p>
+<p><a href="http://s5.51cto.com/wyfs02/M02/9E/C6/wKioL1mWQnTxXSK9AACC7MtQnPI175.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>可以从图中看出，大部分骑手日常使用的主流层面，可以采用 Native 来开发，这部分重度使用的占比约 20%，其余 80% 的功能都可以考虑动态化方案（H5）。</p>
+<h3 id="蜂鸟团队的动态化架构演进"><a href="#蜂鸟团队的动态化架构演进" class="headerlink" title="蜂鸟团队的动态化架构演进"></a>蜂鸟团队的动态化架构演进</h3><p>蜂鸟的动态方案经过 Hypid、React Native 和 Weex 三个主要阶段。</p>
+<p>第一阶段：Hypid</p>
+<p>在 Hypid 方案上，以 H5 的动态性为基础，通过 Jspidge 做桥梁，与 Native 进行通信，之后通过 URL Router 进行跳转，架构如下图：</p>
+<p><a href="http://s1.51cto.com/wyfs02/M00/9E/C7/wKioL1mWQwiCr3PkAACDqX-fg-k465.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>这套动态方案的优点显而易见，这里主要介绍开发效率、更新体验和跨平台三方面：</p>
+<pre><code>开发效率。Web 经过多年的应用实践，已经拥有完整的开发流程和开发工具，开发一个 H5 页面非常快速。开发效率这一因素不能忽略，因为初期产品的想法和落地速度会直接影响产品的命运。
+
+如蜂鸟送送，初期没有原生的资源去支撑，就用原生包壳，内部全部用 H5，这样的情况坚持了两月左右，为蜂鸟送送前期的方案验证做了很大的贡献。
+
+更新体验。因 H5 和原生耦合只有扩展的 Native API，只要把这些 API 维护足够全，开发的业务功能就可以在完全不用更新 APK 的情况下，做到热更新。且用户下一次打开应用是最新的，这和 Native 的升级体验相比简直是一天一地。
+</code></pre><p>跨平台。之前安卓和 iOS 代码需要开发两次，现在一个功能决定用 H5 后，由一个工程师来开发一套代码即可。</p>
+<p>这套动态方案很大的缺点就是用户体验差，当用 H5 做一些复杂的功能或动画时，可能会卡顿的和 PPT 一样。因为 H5 的体验问题，蜂鸟的原则是经常更新的且功能不复杂的页面会选择用 H5。</p>
+<p>第二阶段：React Native</p>
+<p>这个动态方案完全脱离了以 H5 为基础的 Hypid 方案，通过自定义 DSL 将 UI 渲染成原生控件，这样一来， RN 的页面就保证了原生的体验和 Web 的效率。</p>
+<p><a href="http://s3.51cto.com/wyfs02/M00/00/17/wKiom1mWQ02SyElqAAA_HpORElY334.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>除了上一点，还有组件化开发、复用率高、Android 和 iOS 95% 的代码共用和测试效率高等优点。</p>
+<p>鉴于这些优点，蜂鸟在 React Native 上做了很多事情，如 Crash 优化、基础控件沉淀、Bundle+ 图片热更新、首屏加载优化和 Redux 单项数据流等。</p>
+<p>正当享受 React Native 带来的开发体验和应用体验提升时，蜂鸟遇到 RN 的一些痛点，如 ScrollView 性能、Bundle 包过大、很多优化都需要修改源码和 peaking change 等。</p>
+<p>第三阶段：WEEX</p>
+<p>面对如上这些痛点，不知如何应对时，WEEX 来了。官方宣传的轻量、可扩展和高性能等特点，让蜂鸟团队眼前一亮。</p>
+<p><a href="http://s1.51cto.com/wyfs02/M02/00/17/wKiom1mWQ37hG3jlAABybECOtZo318.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>经深入研究后，蜂鸟发现 WEEX 和 React Native 如出一辙，那么为什么要选择类似的方案呢？</p>
+<p>我们队 WEEX 和 React Native 两者基于 JS 引擎、语法、数据流、性能、开发体验及热更新等维度进行了对比。</p>
+<p>如下图，是 WEEX 和 React Native JS 引擎对比：</p>
+<p><a href="http://s2.51cto.com/wyfs02/M02/00/17/wKiom1mWRN7zAPELAABbNS_7sQg665.jpg-wh_600x-s_2591977570.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>React Native 在安卓和 iOS 使用的都是 JsCore，WEEX 在安卓端使用的是 UC 精简版 V8。如上图中的图表可以看出，V8 相比 JsCore 要胜一筹。</p>
+<p>WEEX 和 React Native 语法对比。语法方面，React Native 使用的是 React，WEEX 使用的是 Vue。虽然两套方案都实现了如响应式，组件化、状态管理等功能。</p>
+<p>如下图，是两者简单 Demo 的实践：</p>
+<p><a href="http://s5.51cto.com/wyfs02/M00/9E/C7/wKioL1mWRCigdkKHAABwt0fvCXw732.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>实践发现，WEEX 相比 React Native 要优雅一些，是因为 Vue 有很多自定义标签，当在做一些 UI 和逻辑交杂在一起时，会让代码简洁很多。</p>
+<p> WEEX 和 React Native 的数据流对比，React Native 使用 Redux，而 WEEX 使用 Vuex，不是 WEEX 不能使用 Redux，而是 Vuex 更适合 WEEX。</p>
+<p>如下图，是两者的数据流，大同小异：</p>
+<p><a href="http://s1.51cto.com/wyfs02/M00/00/17/wKiom1mWRLfh2saPAABuL1rfv8E279.jpg-wh_600x-s_4251596638.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>但 Vuex 在实现一些计算属性时，能在更细的颗粒度去更新 UI，而 Redux 只能实现到组件的级别，这样的点很多的话会带来性能上的差异。</p>
+<p>如下图，是 WEEX 和 React Native 的性能对比，左侧是 WEEX 官方给出的与 React Native 在性能方面的对比图：</p>
+<p><a href="http://s3.51cto.com/wyfs02/M01/00/17/wKiom1mWRTPAg_PPAACLct1tirY935.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>在渲染时间和内存占用方面 WEEX 要优于 React Native，在 CPU 占用方面两者相差不大，FPS 上 WEEX 要稍逊于 React Native。</p>
+<p>在 ListView Android 方面，React Native 目前采用 ScrollView，WEEX 使用 Recyclerview 实现，性能稍好。</p>
+<p>同时 WEEX 在增强开发、指定线程、首屏渲染和性能监控等方面也做了优化。</p>
+<p>如下图，是 WEEX 和 React Native 的开发体验对比：</p>
+<p><a href="http://s3.51cto.com/wyfs02/M01/9E/C7/wKioL1mWRVTAtcifAACBgbdrT_4252.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>和 React Native 相比，WEEX 在打包、监控性能、跨平台等方面都有一定优势。总体来说，React Native 更像是一个技术框架，WEEX 更像是一个业务框架。</p>
+<p>如下图，是 WEEX 和 React Native 的热更新对比：</p>
+<p><a href="http://s2.51cto.com/wyfs02/M01/9E/C7/wKioL1mWRHPyvUXiAABbEPXlvFo839.jpg-wh_600x-s_429993283.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>React Native 与 WEEX 官方都表示支持热更新，但他们的实现方式不同。在 React Native 上可通过把图片打包下发到本地来实现更新。</p>
+<p>WEEX 有两个方法，一是选择本地资源加载，二是像网页一样直接加载页面。</p>
+<p>如下图，是 React Native 与 WEEX 的对比总结：</p>
+<p><a href="http://s1.51cto.com/wyfs02/M02/00/17/wKiom1mWRAWDORHEAACmpl7I_mM064.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>React Native 更像一个先驱者，拥有超强的社区人气，但也因开源社区维护代码的原因处于一个野蛮生长的状态。而 WEEX 是站在 React Native 的肩膀上，做了各种微创新，实现更多贴心的小细节。</p>
+<p>基于 WEEX 性能、稳定性等方面都比 React Native 高，蜂鸟决定把动态化方案往 WEEX 上迁移，虽然它现在还有不足，有些轮子还是要自己去做。</p>
+<h3 id="蜂鸟团队-WEEX-实践"><a href="#蜂鸟团队-WEEX-实践" class="headerlink" title="蜂鸟团队 WEEX 实践"></a>蜂鸟团队 WEEX 实践</h3><p>凭借之前 React Native 相关的实践经验，基于 WEEX 做了一套更完整的动态方案。涉及以下几个方面，如下图：</p>
+<p><a href="http://s2.51cto.com/wyfs02/M01/9E/C7/wKioL1mWRujh1_1LAABeZzyxS1s184.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>统一的pidge </p>
+<p><a href="http://s1.51cto.com/wyfs02/M00/00/17/wKiom1mWRvuA9JTzAABSweUT5M8986.jpg-wh_600x-s_2462090452.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>在 Android &amp; iOS 端，约定相同的方法名、参数，在 JS 层抹平平台差异以及统一分类管理暴露给业务的 API。</p>
+<p>把这样的统一 pidge 方案提供给业务部门，他们只需关心暴露的 API，而不需要关心下一层平台的兼容，大大提升开发效率。</p>
+<p>加载更新策略</p>
+<p>加载更新方面，我们约定了一套自有协议，有 Page、URL 和 Tag，通过封装的 Router，就可以做到页面级的跳转。</p>
+<p><a href="http://s1.51cto.com/wyfs02/M01/00/17/wKiom1mWR0HQ8EWCAABLZVoWZE0365.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>这样一来，我们很轻松地做到了页面的跳转、解耦和页面的降级。当页面出现问题，只需要把 URL 改成降级之后的 H5 页面下发即可，用户触及到的就是修复之后的 H5 页面了。</p>
+<p>如下图，是预加载策略：</p>
+<p><a href="http://s4.51cto.com/wyfs02/M00/9E/C7/wKioL1mWRyXyqfsRAABiyKnhkgc676.png" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-3d832b201afd2bdf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></a> </p>
+<p>当 H5 页面下发到客户端之后，会对本地资源进行检查，如果有 JS 文件，就忽略，没有的话就把页面下载。当用户打开页面，再去看本地，存在资源的话直接加载，不存在的话就即时下载再运行，与传统的 Web 流程相似。</p>
+<p>性能监控</p>
+<p>性能监控用来判断线上服务是否正常，是整套方案最重要的部分。</p>
+<p>WEEX 可以很方便地将所有的参数全部拿到且通过反射拿到所有的性能数据传到云端。</p>
+<p>基于这些数据，我们就可以知道线上有了哪些页面，它的渲染是否有问题。基于这些问题，就可做相应的优化。</p>
+<p>如下图，是线上的数据情况：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2692013-e49174df3d85ebf1.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="wKioL1mWR1_yo0slAACw7OO3gPA560.jpg"></p>
+<p>监控三个指标，分别是 JS 引擎的初始化时间、页面打开时间和网络时间。因大部分 WEEX 页面都是业务，所以说业务埋点必不可少。饿了么也实现了一套框架，将业务埋点传给服务端，然后方便产品去制定一些产品方面的策略。</p>
+<p>JS 的错误统计</p>
+<p>可以捕捉 JS 端抛出的错误，如果所处团队是前端主导，可传给前端。如果是 Native 主导，可通过搜集平台将这些崩溃上传，在后台看到这些错误之后，找到相应的代码去修复。</p>
+<p>Native 的错误</p>
+<p>有了 JS 错误，Native 错误也不能忽略。</p>
+<p>如下图，是 WEEX 动态方案上线一周之后线上抛的错误：</p>
+<p><a href="http://s1.51cto.com/wyfs02/M01/00/17/wKiom1mWQYehx6inAABkUKfnsEE670.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>从图中可以看到都是个位数，这一点其实当时也很惊讶，WEEX 确实做得很稳定，这一点超出预料。</p>
+<p>共用组件和 API</p>
+<p>之前蜂鸟在 React Native 上面的一些实践，积累了一些很常用的组件和 API。WEEX 和 React Native 都是使用 JS 实现，所以我们很方便的将 RN 的控件转化为 WEEX 控件。</p>
+<p>如下图，是实现的组件和 API，几乎可以满足中小团队的日常使用：</p>
+<p><a href="http://s5.51cto.com/wyfs02/M00/00/17/wKiom1mWQS-yXSj_AABr0MKHwkc042.jpg-wh_600x-s_1736076720.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>调试工具</p>
+<p>这方面 WEEX 做的很贴心，虽然没有整合到整个初始化的项目中，但开源了几个库，可把代码拷贝到业务中进行使用。</p>
+<p><a href="http://s2.51cto.com/wyfs02/M02/9E/C6/wKioL1mWQRyT9bJJAAB4Jo5u2hU029.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>WEEX 还可支持 Debug 模式显示调试工具、支持 hot reload、方便的查看性能指标和 Shell 脚本一键打包等功能。</p>
+<p>综上所述，基于这些维度实现的框架，可以方便的让业务来使用。</p>
+<p>如下，是饿了么和蜂鸟用 WEEX 实现的两个页面：</p>
+<p><a href="http://s1.51cto.com/wyfs02/M01/9E/C6/wKioL1mWQQ2QsuD8AAB7kaUC5I8950.jpg-wh_600x-s_1820802189.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>饿了么的第二个发现页面，就是基于 WEEX。蜂鸟 APP 可能大家接触不到，上图是当前通知的活动界面，还有大量的新功能正在接入。</p>
+<p>如果你正在考虑 WEEX 与 React Native 方案，或是正在接入 React Native。看到这篇文章，你可以去调研以下 WEEX 方案，可能你会有另一种选择。</p>
+<p>以上内容根据许锦洋老师在 WOTA2017 “移动端架构演进”专场的演讲内容整理。</p>
+<p><a href="http://s2.51cto.com/wyfs02/M02/00/17/wKiom1mWQOuQbvEsAABT9GSW200927.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
+<p>负责饿了么蜂鸟 APP 的架构、研发等工作。拥有饿了么商家、风行者、蜂鸟众包等多款 APP 开发工作经历，并从 0 开始架构和开发了整个蜂鸟团队 APP。目前关注的技术方向为移动跨平台技术方案、移动端架构、移动端性能优化等。</p>
+<p>【转载 51CTO原创稿件】</p>
 
           
         
@@ -379,7 +503,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/03/25/01ios-Job-interview/">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/Web【解决Mac版本-Sublime-text3安装Package-Control问题】/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ChinaArJun">
@@ -398,7 +522,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/25/01ios-Job-interview/" itemprop="url">面试之 - Socket网络编程，TCP/IP和Http等网络协议理解</a></h1>
+                <a class="post-title-link" href="/2018/11/29/Web【解决Mac版本-Sublime-text3安装Package-Control问题】/" itemprop="url">Web【解决Mac版本 Sublime text3安装Package Control问题】</a></h1>
         
 
         <div class="post-meta">
@@ -410,140 +534,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-25T00:03:14+08:00">
-                2018-03-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>面试之 - Socket网络编程，TCP/IP和Http等网络协议理解</p>
-<h4 id="一、网络各个协议：TCP-IP、SOCKET、HTTP等"><a href="#一、网络各个协议：TCP-IP、SOCKET、HTTP等" class="headerlink" title="一、网络各个协议：TCP/IP、SOCKET、HTTP等"></a>一、网络各个协议：TCP/IP、SOCKET、HTTP等</h4><p>网络七层由下往上分别为物理层、数据链路层、网络层、传输层、会话层、表示层和应用层。<br>其中物理层、数据链路层和网络层通常被称作媒体层，是网络工程师所研究的对象；<br>传输层、会话层、表示层和应用层则被称作主机层，是用户所面向和关心的内容。<br>http协议   对应于应用层<br>tcp协议    对应于传输层<br>ip协议     对应于网络层<br>三者本质上没有可比性。  何况HTTP协议是基于TCP连接的。<br>TCP/IP是传输层协议，主要解决数据如何在网络中传输；而HTTP是应用层协议，主要解决如何包装数据。<br>我 们在传输数据时，可以只使用传输层（TCP/IP），但是那样的话，由于没有应用层，便无法识别数据内容，如果想要使传输的数据有意义，则必须使用应用层 协议，应用层协议很多，有HTTP、FTP、TELNET等等，也可以自己定义应用层协议。WEB使用HTTP作传输层协议，以封装HTTP文本信息，然 后使用TCP/IP做传输层协议将它发送到网络上。Socket是对TCP/IP协议的封装，Socket本身并不是协议，而是一个调用接口（API），通过Socket，我们才能使用TCP/IP协议。</p>
-<h4 id="二、Http和Socket连接区别"><a href="#二、Http和Socket连接区别" class="headerlink" title="二、Http和Socket连接区别"></a>二、Http和Socket连接区别</h4><p>相信不少学习手机联网开发的朋友都接触过Http与Socket连接,究竟他们有什么区别,这边浅谈下个人理解。</p>
-<h5 id="2-1、TCP连接"><a href="#2-1、TCP连接" class="headerlink" title="2.1、TCP连接"></a>2.1、TCP连接</h5><p>Socket是对TCP/IP协议的封装,要想明白Socket连接，先要明白TCP连接。手机能够使用联网功能是因为手机底层实现了TCP/IP协议，可以使手机终端通过无线网络建立TCP连接。TCP协议可以对上层网络提供接口，使上层网络数据的传输建立在“无差别”的网络之上。<br>建立起一个TCP连接需要经过“三次握手”：<br>第一次握手：客户端发送syn包(syn=j)到服务器，并进入SYN_SEND状态，等待服务器确认；<br>第二次握手：服务器收到syn包，必须确认客户的SYN（ack=j+1），同时自己也发送一个SYN包（syn=k），即SYN+ACK包，此时服务器进入SYN_RECV状态；<br>第三次握手：客户端收到服务器的SYN＋ACK包，向服务器发送确认包ACK(ack=k+1)，此包发送完毕，客户端和服务器进入ESTABLISHED状态，完成三次握手。<br>握 手过程中传送的包里不包含数据，三次握手完毕后，客户端与服务器才正式开始传送数据。理想状态下，TCP连接一旦建立，在通信双方中的任何一方主动关闭连 接之前，TCP 连接都将被一直保持下去。断开连接时服务器和客户端均可以主动发起断开TCP连接的请求，断开过程需要经过“四次握手”（过程就不细写了，就是服务器和客 户端交互，最终确定断开）</p>
-<h5 id="2-1-1-TCP-连接的建立步骤"><a href="#2-1-1-TCP-连接的建立步骤" class="headerlink" title="2.1.1 TCP 连接的建立步骤"></a>2.1.1 TCP 连接的建立步骤</h5><p>典型的 TCP 客户端要经过下面三步操作：<br>• 创建一个 Socket 实例：构造函数向指定的远程主机和端口建立一个 TCP 连接；<br>• 通过套接字的 I/O 流与服务端通信；<br>• 使用 Socket 类的 close 方法关闭连接。<br>服务端的工作是建立一个通信终端，并被动地等待客户端的连接。<br>典型的 TCP 服务端执行如下两步操作：</p>
-<ol>
-<li>创建一个 ServerSocket 实例并指定本地端口，用来监听客户端在该端口发送的 TCP 连接请求；</li>
-<li>重复执行：<br>• 调用 ServerSocket 的 accept（）方法以获取客户端连接，并通过其返回值创建一个 Socket 实例；<br>• 为返回的 Socket 实例开启新的线程，并使用返回的 Socket 实例的 I/O 流与客户端通信； 通信完成后，使<br>用 Socket 类的 close（）方法关闭该客户端的套接字连接。</li>
-</ol>
-<h5 id="2-2、HTTP连接"><a href="#2-2、HTTP连接" class="headerlink" title="2.2、HTTP连接"></a>2.2、HTTP连接</h5><p>HTTP协议即超文本传送协议(HypertextTransfer Protocol )，是Web联网的基础，也是手机联网常用的协议之一，HTTP协议是建立在TCP协议之上的一种应用。<br>HTTP连接最显著的特点是客户端发送的每次请求都需要服务器回送响应，在请求结束后，会主动释放连接。从建立连接到关闭连接的过程称为“一次连接”。<br>1）在HTTP 1.0中，客户端的每次请求都要求建立一次单独的连接，在处理完本次请求后，就自动释放连接。<br>2）在HTTP 1.1中则可以在一次连接中处理多个请求，并且多个请求可以重叠进行，不需要等待一个请求结束后再发送下一个请求。<br>3) 在 HTTP 2.0中,多路复用,Http2连接可以承载数十或数百个流的复用，多路复用意味著来自很多流的数据包能够混合在一起通过同样连接传输，两列不同火车被混合在一起传输，当到达终点时，它们又被拆开组成两列不同的火车。<br>由 于HTTP在每次请求结束后都会主动释放连接，因此HTTP连接是一种“短连接”，要保持客户端程序的在线状态，需要不断地向服务器发起连接请求。通常的 做法是即时不需要获得任何数据，客户端也保持每隔一段固定的时间向服务器发送一次“保持连接”的请求，服务器在收到该请求后对客户端进行回复，表明知道客 户端“在线”。若服务器长时间无法收到客户端的请求，则认为客户端“下线”，若客户端长时间无法收到服务器的回复，则认为网络已经断开。<br>三、SOCKET原理</p>
-<h5 id="3-1、套接字（socket）概念"><a href="#3-1、套接字（socket）概念" class="headerlink" title="3.1、套接字（socket）概念"></a>3.1、套接字（socket）概念</h5><p>套接字（socket）是通信的基石，是支持TCP/IP协议的网络通信的基本操作单元。它是网络通信过程中端点的抽象表示，包含进行网络通信必须的五种信息：连接使用的协议，本地主机的IP地址，本地进程的协议端口，远地主机的IP地址，远地进程的协议端口。<br>应 用层通过传输层进行数据通信时，TCP会遇到同时为多个应用程序进程提供并发服务的问题。多个TCP连接或多个应用程序进程可能需要通过同一个 TCP协议端口传输数据。为了区别不同的应用程序进程和连接，许多计算机操作系统为应用程序与TCP／IP协议交互提供了套接字(Socket)接口。应 用层可以和传输层通过Socket接口，区分来自不同应用程序进程或网络连接的通信，实现数据传输的并发服务。</p>
-<h5 id="3-2-、建立socket连接"><a href="#3-2-、建立socket连接" class="headerlink" title="3.2 、建立socket连接"></a>3.2 、建立socket连接</h5><p>建立Socket连接至少需要一对套接字，其中一个运行于客户端，称为ClientSocket，另一个运行于服务器端，称为ServerSocket。<br>套接字之间的连接过程分为三个步骤：服务器监听，客户端请求，连接确认。<br>服务器监听：服务器端套接字并不定位具体的客户端套接字，而是处于等待连接的状态，实时监控网络状态，等待客户端的连接请求。<br>客户端请求：指客户端的套接字提出连接请求，要连接的目标是服务器端的套接字。为此，客户端的套接字必须首先描述它要连接的服务器的套接字，指出服务器端套接字的地址和端口号，然后就向服务器端套接字提出连接请求。<br>连 接确认：当服务器端套接字监听到或者说接收到客户端套接字的连接请求时，就响应客户端套接字的请求，建立一个新的线程，把服务器端套接字的描述发给客户 端，一旦客户端确认了此描述，双方就正式建立连接。而服务器端套接字继续处于监听状态，继续接收其他客户端套接字的连接请求。</p>
-<h5 id="3-3、SOCKET连接与TCP连接"><a href="#3-3、SOCKET连接与TCP连接" class="headerlink" title="3.3、SOCKET连接与TCP连接"></a>3.3、SOCKET连接与TCP连接</h5><p>协议相当于相互通信的程序间达成的一种约定，它规定了分组报文的结构、交换方式、包含的意义以及怎样对报文所包含的信息进行解析TCP/IP 协议族有 IP 协议、TCP 协议和 UDP 协议。现在 TCP/IP 协议族中的主要 socket 类型为流套接字（使用 TCP 协议）和数据报套接字（使用 UDP 协议）。TCP 协议提供面向连接的服务，通过它建立的是可靠地连接。Java 为 TCP 协议提供了两个类：Socke 类和 ServerSocket 类。一个 Socket 实例代表了 TCP 连接的一个客户端，而一个 ServerSocket 实例代表了 TCP连接的一个服务器端，一般在 TCP Socket 编程中，客户端有多个，而服务器端只有一个，客户端 TCP 向服务器端 TCP 发送连接请求，服务器端的 ServerSocket 实例则监听来自客户端的 TCP 连接请求，并为每个请求创建新的 Socket 实例，由于服务端在调用 accept（）等待客户端的连接请求时会阻塞，直到收到客户端发送的连接请求才会继续往下执行代码，因此要为每个 Socket 连接开启一个线程。服务器端要同时处理 ServerSocket 实例和 Socket 实例，而客户端只需要使用 Socket 实例。另外，每个 Socket 实例会关联一个 InputStream和 OutputStream 对象，我们通过将字节写入套接字的 OutputStream 来发送数据，并通过从 InputStream 来接收数据。<br>客户端向服务器端发送连接请求后，就被动地等待服务器的响应。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/03/25/02web解决Mac版本 Sublime text3安装Package Control问题/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ChinaArJun">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿俊的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/25/02web解决Mac版本 Sublime text3安装Package Control问题/" itemprop="url">解决Mac版本 Sublime text3安装Package Control问题</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-25T00:03:14+08:00">
-                2018-03-25
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:07:21+08:00">
+                2018-11-29
               </time>
             
 
@@ -588,40 +580,1138 @@
 <p>下载地址： <a href="https://github.com/wbond/package_control" target="_blank" rel="noopener">https://github.com/wbond/package_control</a></p>
 <p>1.把下载好的zip包解压，重命名为Package Control。</p>
 <p>2.打开Sublime3</p>
-<pre><code>菜单-&gt;Preferences-&gt;Browse Packages...然后复制Package Control文件夹到该目录、  MAC版本注意：
+<pre><code>菜单-&gt;Preferences-&gt;Browse Packages...然后复制Package Control文件夹到该目录、  MAC版本注意： 
+</code></pre><p> Mac位置:/Users/用户名/Library/Application Support/Sublime Text 3/Installed Packages  </p>
+<p>3.重启Sublime3,如果菜单-&gt;Preferences有Package Setting和Package Control就说明安装成功。</p>
+<p>4.Ctrl+Shift+p输入install选中Install Package回车就可以安装插件。</p>
+<p>然后，你会发现遇到问题，也许是“There Are No Packages Available For Installation”</p>
+<p>不要慌张 </p>
+<p>网上说了挺多原因，简单例举一下： </p>
+<p>1、IPV6的问题 </p>
+<p>2、无法打开网址<a href="https://packagecontrol.io/channel_v3.json" target="_blank" rel="noopener">https://packagecontrol.io/channel_v3.json</a>导致访问不了</p>
+<p>简单试一下都不行，最后我经过实验得出原因是：官方提供的Package Control就是不能用。将官方的那个Package Control删除了，自己进行添加Package Control便可以了！</p>
+<p>具体步骤： </p>
+<p>1、Package Control下载网址：<a href="https://github.com/wbond/sublime_package_control" target="_blank" rel="noopener">Package Control下载链接</a> </p>
+<p>下载之后将其解压后，将解压文件重新命名为：Package Control </p>
+<p>严格按照上面明明，首字母记住要大些！！！</p>
+<p>2、打开Sublime，点击：首选项-&gt;浏览程序包，便会打开一个文件夹！ </p>
+<p>然后删除这个文件夹中已有的”Package Control文件夹”，将刚才自己下载好的并且重新命名的Package Control复制到该文件夹下，然后重新启动Sublime，这样便可以使用Package Control来安装其他插件了！ </p>
+<p>这样就能解决问题了。然后安装自己想要的插件。各种高亮都没有问题</p>
 
- Mac位置:/Users/用户名/Library/Application Support/Sublime Text 3/Installed Packages
+          
+        
+      
+    </div>
+    
+    
+    
 
- 3.重启Sublime3,如果菜单-&gt;Preferences有Package Setting和Package Control就说明安装成功。
+    
 
- 4.Ctrl+Shift+p输入install选中Install Package回车就可以安装插件。
+    
 
- 然后，你会发现遇到问题，也许是“There Are No Packages Available For Installation”
+    
 
- 不要慌张
+    <footer class="post-footer">
+      
 
- 网上说了挺多原因，简单例举一下：
+      
 
- 1、IPV6的问题
+      
 
- 2、无法打开网址[https://packagecontrol.io/channel_v3.json](https://packagecontrol.io/channel_v3.json)导致访问不了
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
 
- 简单试一下都不行，最后我经过实验得出原因是：官方提供的Package Control就是不能用。将官方的那个Package Control删除了，自己进行添加Package Control便可以了！
 
- 具体步骤：
+    
+      
 
- 1、Package Control下载网址：[Package Control下载链接](https://github.com/wbond/sublime_package_control)
+  
 
- 下载之后将其解压后，将解压文件重新命名为：Package Control
+  
+  
+  
 
- 严格按照上面明明，首字母记住要大些！！！
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【老司机专属-Lombok超便捷工具介绍及使用方法】/">
 
- 2、打开Sublime，点击：首选项-&gt;浏览程序包，便会打开一个文件夹！
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChinaArJun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
 
- 然后删除这个文件夹中已有的”Package Control文件夹”，将刚才自己下载好的并且重新命名的Package Control复制到该文件夹下，然后重新启动Sublime，这样便可以使用Package Control来安装其他插件了！
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
 
- 这样就能解决问题了。然后安装自己想要的插件。各种高亮都没有问题
-</code></pre>
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/29/JAVA【老司机专属-Lombok超便捷工具介绍及使用方法】/" itemprop="url">JAVA【老司机专属 Lombok超便捷工具介绍及使用方法】</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:06:43+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><a href="http://www.cnblogs.com/holten/p/5729226.html" target="_blank" rel="noopener">Lombok介绍及使用方法</a></p>
+<p>lombok简介<br>lombok是一个非常好用的小工具，刚见到的时候就感觉非常惊艳，有一种相见恨晚的感觉，用了一段时间之后感觉的确挺不错，所以特此来推荐一下。<br><a href="https://projectlombok.org/" target="_blank" rel="noopener">lombok的官方地址：https://projectlombok.org/</a><br><a href="https://github.com/rzwitserloot/lombok" target="_blank" rel="noopener">lombok的Github地址：https://github.com/rzwitserloot/lombok</a><br>那么lombok到底是个什么呢，lombok是一个可以通过简单的注解的形式来帮助我们简化消除一些必须有但显得很臃肿的 Java 代码的工具，简单来说，比如我们新建了一个类，然后在其中写了几个字段，然后通常情况下我们需要手动去建立getter和setter方法啊，构造函数啊之类的，lombok的作用就是为了省去我们手动创建这些代码的麻烦，它能够在我们编译源码的时候自动帮我们生成这些方法。<br>lombok能够达到的效果就是在源码中不需要写一些通用的方法，但是在编译生成的字节码文件中会帮我们生成这些方法，这就是lombok的神奇作用。<br>虽然有人可能会说IDE里面都自带自动生成这些方法的功能，但是使用lombok会使你的代码看起来更加简洁，写起来也更加方便。<br>lombok安装<br>lombok的安装跟一般引用jar包没有什么区别，可以到官网上下载最新的jar包，然后导入到项目里面就好啦。<br>Maven添加依赖</p>
+<dependencies> <dependency><br><groupid>org.projectlombok</groupid><br><artifactid>lombok</artifactid><br><version>1.16.10</version><br></dependency></dependencies>
+
+<p>Intellij idea开发的话需要安装Lombok plugin，同时设置 Setting -&gt; Compiler -&gt; Annotation Processors -&gt; Enable annotation processing勾选。<br>lombok使用<br>lombok使用过程中主要是靠注解起作用的，官网上的文档里面有所有的注解，这里不一一罗列，只说明其中几个比较常用的。<br>@NonNull<br>: 可以帮助我们避免空指针。<br>使用lombok：<br>import lombok.NonNull; public class NonNullExample extends Something {<br>private String name; public NonNullExample(@NonNull Person person) {<br>super(“Hello”); this.name = person.getName();<br>}}</p>
+<p>不使用lombok：<br>public class NonNullExample extends Something { </p>
+<p>private String name; public NonNullExample(@NonNull Person person)<br>{ super(“Hello”);<br>if (person == null) {<br> throw new NullPointerException(“person”);<br> }<br> this.name = person.getName();<br>}}</p>
+<p>@Cleanup<br>: 自动帮我们调用close()<br>方法。<br>使用lombok：<br>import lombok.Cleanup;import java.io.*;public class CleanupExample {<br>public static void main(String[] args) throws IOException {<br>@Cleanup InputStream in = new FileInputStream(args[0]);<br> @Cleanup OutputStream out = new FileOutputStream(args[1]);<br> byte[] b = new byte[10000];<br>while (true) { int r = in.read(b);<br> if (r == -1) break; out.write(b, 0, r);<br>} }}</p>
+<p>不使用lombok：<br>import java.io.*; public class CleanupExample {<br>public static void main(String[] args) throws IOException {<br>InputStream in = new FileInputStream(args[0]); try {<br>OutputStream out = new FileOutputStream(args[1]); try { byte[] b = new byte[10000]; while (true) {<br>int r = in.read(b); if (r == -1) break; out.write(b, 0, r);<br>} } finally {<br> if (out != null) {<br>out.close();<br>} } } finally {<br>if (in != null) { in.close();<br>} } }}</p>
+<p>@Getter / @Setter<br>: 自动生成Getter/Setter方法<br>使用lombok：<br>import lombok.AccessLevel; import lombok.Getter; import lombok.Setter; public class GetterSetterExample {<br>@Getter @Setter private int age = 10; @Setter(AccessLevel.PROTECTED) private String name;<br> }</p>
+<p>不使用lombok：<br>public class GetterSetterExample {<br> private int age = 10; private String name; </p>
+<p>public int getAge() {<br> return age;<br>} </p>
+<p>public void setAge(int age) {<br>this.age = age;<br> }<br>protected void setName(String name) { this.name = name; }}</p>
+<p>@NoArgsConstructor<br>: 自动生成无参数构造函数。<br>@AllArgsConstructor<br>: 自动生成全参数构造函数。<br>@Data: [自动为所有字段添加@ToString]</p>
+<p> @Test public void test1() {<br> // 自动生成日志对象 <em>log</em>.debug(“sss”); }</p>
+<p>还有其他一些比如自动生成日志对象等等之类的注解可以到官方网站去了解，就不一一列举了。<br><a href="https://projectlombok.org/features/index.html" target="_blank" rel="noopener">官方文档https://projectlombok.org/features/index.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【Java-—-手把手教你整合最简洁的SSM框架：SpringMVC-Spring-MyBatis】/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChinaArJun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/29/JAVA【Java-—-手把手教你整合最简洁的SSM框架：SpringMVC-Spring-MyBatis】/" itemprop="url">JAVA【手把手教你整合最简洁的SSM框架：SpringMVC + Spring + MyBatis】</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:06:19+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>手把手教你整合最简洁的SSM框架：SpringMVC + Spring + MyBatis<br>快速预览地址：<a href="http://120.24.96.44/AJ-crm/customer/list.action" target="_blank" rel="noopener">http://120.24.96.44/AJ-crm/customer/list.action</a><br>GitHub地址: <a href="https://github.com/ChinaArJun/Online-CRM" target="_blank" rel="noopener">https://github.com/ChinaArJun/Online-CRM</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.介绍 ~ Project introduction</span><br><span class="line">项目整体使用SSM框架：SpringMVC + Spring + MyBatis WEB层加入了bootstrap框架，视觉效果非常棒</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2.下载项目 ~ Download project</span><br><span class="line">git clone [https://github.com/ChinaArJun/Online-CRM.git](https://github.com/ChinaArJun/Online-CRM.git) </span><br><span class="line">下载项目后需要导入sql文件,更改MySql用户名和密码即可</span><br></pre></td></tr></table></figure>
+<p>3.预览 ~ Preview picture</p>
+<p><a href="https://github.com/ChinaArJun/Online-CRM/blob/master/crm.png" target="_blank" rel="noopener"><img src="https://github.com/ChinaArJun/Online-CRM/raw/master/crm.png" alt="1"></a><a href="https://github.com/ChinaArJun/Online-CRM/blob/master/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7.png" target="_blank" rel="noopener"><img src="https://github.com/ChinaArJun/Online-CRM/raw/master/%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7.png" alt="2"></a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【使用Mybatis-Generator自动生成Dao、Model、Mapping相关文件】/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChinaArJun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/29/JAVA【使用Mybatis-Generator自动生成Dao、Model、Mapping相关文件】/" itemprop="url">JAVA【使用Mybatis-Generator自动生成Dao、Model、Mapping相关文件】</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:06:01+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>用generatorsqlmapcustom对<a href="http://lib.csdn.net/base/mysql" target="_blank" rel="noopener">数据库</a>进行逆向工程，生成接口和xml，还有实体</p>
+<p>1 首先下载generatorsqlmapcustom</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-3cdbb161841a237f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="9072E162-8F11-4924-98C5-5E11598A8514.png"></p>
+<p>2 导入工程</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-f56fc8f472afe6bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AB80D8D6-FDA8-40C4-883D-BF67E5BEA045.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-a6cea7cc03233ef6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="97913C13-A787-4A84-8949-5D9C58F96EDE.png"></p>
+<p>3 配置用户名密码</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-6b445d202e1a974f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="7F56185A-94B4-4310-95B1-596E69A06367.png"></p>
+<p>4 配置映射信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE generatorConfiguration</span><br><span class="line">  PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;</span><br><span class="line">  &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;generatorConfiguration&gt;</span><br><span class="line">	&lt;context id=&quot;testTables&quot; targetRuntime=&quot;MyBatis3&quot;&gt;</span><br><span class="line">		&lt;commentGenerator&gt;</span><br><span class="line">			&lt;!-- 是否去除自动生成的注释 true：是 ： false:否 --&gt;</span><br><span class="line">			&lt;property name=&quot;suppressAllComments&quot; value=&quot;true&quot; /&gt;</span><br><span class="line">		&lt;/commentGenerator&gt;</span><br><span class="line">		&lt;!--数据库连接的信息：驱动类、连接地址、用户名、密码 --&gt;</span><br><span class="line">		&lt;jdbcConnection driverClass=&quot;com.mysql.jdbc.Driver&quot;</span><br><span class="line">			connectionURL=&quot;jdbc:mysql://localhost:3306/taotao&quot; userId=&quot;root&quot;</span><br><span class="line">			password=&quot;123&quot;&gt;</span><br><span class="line">		&lt;/jdbcConnection&gt;</span><br><span class="line">		&lt;!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和 </span><br><span class="line">			NUMERIC 类型解析为java.math.BigDecimal --&gt;</span><br><span class="line">		&lt;javaTypeResolver&gt;</span><br><span class="line">			&lt;property name=&quot;forceBigDecimals&quot; value=&quot;false&quot; /&gt;</span><br><span class="line">		&lt;/javaTypeResolver&gt;</span><br><span class="line"></span><br><span class="line">		&lt;!-- targetProject:生成PO类的位置 --&gt;</span><br><span class="line">		&lt;javaModelGenerator targetPackage=&quot;com.taotao.pojo&quot;</span><br><span class="line">&lt;!-- 指定位置 ：最好直接指定根目录,以免出现生成不出文件的情况 --&gt;			&lt;targetProject=&quot;/Users/pro/Desktop/Java/javaEE28/generatorSqlmapCustom/src&quot;&gt;</span><br><span class="line">			&lt;!-- enableSubPackages:是否让schema作为包的后缀 --&gt;</span><br><span class="line">			&lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;</span><br><span class="line">			&lt;!-- 从数据库返回的值被清理前后的空格 --&gt;</span><br><span class="line">			&lt;property name=&quot;trimStrings&quot; value=&quot;true&quot; /&gt;</span><br><span class="line">		&lt;/javaModelGenerator&gt;</span><br><span class="line">        &lt;!-- targetProject:mapper映射文件生成的位置 --&gt;</span><br><span class="line">		&lt;sqlMapGenerator targetPackage=&quot;com.taotao.mapper&quot; </span><br><span class="line">&lt;!-- 指定位置 ：最好直接指定根目录,以免出现生成不出文件的情况 --&gt;</span><br><span class="line">&lt;targetProject=&quot;/Users/pro/Desktop/Java/javaEE28/generatorSqlmapCustom/src&quot;&gt;</span><br><span class="line">			&lt;!-- enableSubPackages:是否让schema作为包的后缀 --&gt;</span><br><span class="line">			&lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;</span><br><span class="line">		&lt;/sqlMapGenerator&gt;</span><br><span class="line">		&lt;!-- targetPackage：mapper接口生成的位置 --&gt;</span><br><span class="line">		&lt;javaClientGenerator type=&quot;XMLMAPPER&quot;</span><br><span class="line">			targetPackage=&quot;com.taotao.mapper&quot; </span><br><span class="line">&lt;!-- 指定位置 ：最好直接指定根目录,以免出现生成不出文件的情况 --&gt;</span><br><span class="line"> &lt;targetProject=&quot;/Users/pro/Desktop/Java/javaEE28/generatorSqlmapCustom/src&quot;&gt;</span><br><span class="line">			&lt;!-- enableSubPackages:是否让schema作为包的后缀 --&gt;</span><br><span class="line">			&lt;property name=&quot;enableSubPackages&quot; value=&quot;false&quot; /&gt;</span><br><span class="line">		&lt;/javaClientGenerator&gt;</span><br><span class="line">		&lt;!-- 指定数据库表 --&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_content&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_content_category&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_item&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_item_cat&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_item_desc&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_item_param&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_item_param_item&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_order&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_order_item&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_order_shipping&quot;&gt;&lt;/table&gt;</span><br><span class="line">		&lt;table schema=&quot;&quot; tableName=&quot;tb_user&quot;&gt;&lt;/table&gt;</span><br><span class="line"></span><br><span class="line">	&lt;/context&gt;</span><br><span class="line">&lt;/generatorConfiguration&gt;</span><br></pre></td></tr></table></figure></p>
+<p>5 运行生成</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-77fc4f7f4a2b9693.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="A39CF48E-5CCE-49DE-BA87-929777B17496.png"></p>
+<p>Mybatis属于半自动ORM，在使用这个框架中，工作量最大的就是书写Mapping的映射文件，由于手动书写很容易出错，我们可以利用Mybatis-Generator来帮我们自动生成文件。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【SpringMVC-Swagger-UI生成可视图的API文档（详细图解）】/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChinaArJun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/29/JAVA【SpringMVC-Swagger-UI生成可视图的API文档（详细图解）】/" itemprop="url">JAVA【SpringMVC+Swagger UI生成可视图的API文档（详细图解）】</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:05:44+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Swagger UI<br>关于Swagger UI官方解释是这样的：<strong><em>The Swagger UI is an open source project to visually render documentation for a Swagger defined API directly from the API’s Swagger specifcation</em></strong> <a href="http://swagger.io/" target="_blank" rel="noopener">官网地址</a> 下面是官方的效果图：<br><img src="http://upload-images.jianshu.io/upload_images/2692013-c212365ee2b499e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="5F19E5D5-9FB4-45A0-BBF8-613E2014A5C1.png"></p>
+<p>我将上图分成了两部分<br>文档地址：从改地址请求数据，获取JSON格式数据，交给第二步显示<br>API文档显示：将JSON数据转化成可视图的效果</p>
+<p><strong>Swagger可以将某种固定格式的JSON数据生成可以视图的在线API文档，支持在线<a href="http://lib.csdn.net/base/softwaretest" target="_blank" rel="noopener">测试</a>，可以清楚的观察到IO数据</strong>。<br>SpringMVC + Swagger<br>目的：在原有的SpringMVC系统中添加Swagger，通过在接口上添加注解实现，接口文档的同步效果。 下图为我实现之后的效果：<br><img src="http://upload-images.jianshu.io/upload_images/2692013-c6eb0011d61f0be0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="10B721C3-92EB-467F-B7A9-D1764CF96CA8.png"></p>
+<p>项目搭建<br>我的工具：Eclipse开发工具（安装<a href="http://lib.csdn.net/base/javaee" target="_blank" rel="noopener">spring</a>插件，当然也可以不要，就是麻烦点）,Maven，Tomcat，Internet访问，Chrome浏览器 1.创建Simple Spring Web Maven工程 右键New-&gt;Spring Project，选择对应类型，finish, 如下图：[图片上传中。。。（3）] 我的工程的结构，注意那两个配置文件，名称不重要，可以随便改，注意要对应好web.xml中的名称就行。[图片上传中。。。（4）] 想了想还是把三个配置文件贴出来吧。 web.xml<br>&lt;?xml version=”1.0” encoding=”ISO-8859-1”?&gt;<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemalocation="http://java.sun.com/xml/ns/javaeehttp://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5"> <display-name>SwaggerDemo</display-name> <!-- - Location of the XML file that defines the root application context. - Applied by ContextLoaderListener. --> <context-param> <param-name>contextConfigLocation</param-name> <param-value>classpath:spring/application-config.xml</param-value> </context-param> <listener> <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> </listener> <!-- - Servlet that dispatches request to registered handlers (Controller implementations). --> <servlet> <servlet-name>dispatcherServlet</servlet-name> <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> <init-param> <param-name>contextConfigLocation</param-name> <param-value>/WEB-INF/mvc-config.xml</param-value> </init-param> <load-on-startup>1</load-on-startup> </servlet> <servlet-mapping> <servlet-name>dispatcherServlet</servlet-name> <url-pattern>/</url-pattern> </servlet-mapping></web-app></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43</p>
+<p>application-config.xml<br>&lt;?xml version=”1.0” encoding=”UTF-8”?&gt;<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xsi:schemalocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- Uncomment and add your base-package here: <context:component-scan base-package="org.springframework.samples.service"/> --></beans></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13</p>
+<p>mvc-config.xml<br>&lt;?xml version=”1.0” encoding=”UTF-8”?&gt;<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context" xsi:schemalocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"> <!-- Uncomment and your base-package here: <context:component-scan base-package="org.springframework.samples.web"/> --> &lt;mvc:annotation-driven /&gt; <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> <!-- Example: a logical view name of 'showMessage' is mapped to '/WEB-INF/jsp/showMessage.jsp' --> <property name="prefix" value="/WEB-INF/view/"> <property name="suffix" value=".jsp"> </property></property></bean></beans></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23</p>
+<p>这样配置到后面配置Swagger会出现无法自动注入的问题，后面再说，以上为工具自动生成的代码。<br>2.添加Swagger-Spring MVC包、JSON和jackson pom.xml文件中 properties标签里面添加jackson版本号</p>
+<p>&lt;version.jackson&gt;2.4.4&lt;/version.jackson&gt;</p>
+<p>1</p>
+<p>1</p>
+<p>dependencies标签中添加<br><!-- Swagger --> <dependency> <groupid>com.mangofactory</groupid> <artifactid>swagger-springmvc</artifactid> <version>0.9.5</version> </dependency> <!-- JSON --> <dependency> <groupid>net.sf.json-lib</groupid> <artifactid>json-lib</artifactid> <version>2.4</version> <classifier>jdk15</classifier> </dependency> <!-- JACKSON --> <dependency> <groupid>com.fasterxml.jackson.core</groupid> <artifactid>jackson-annotations</artifactid> <version>${version.jackson}</version> </dependency> <dependency> <groupid>com.fasterxml.jackson.core</groupid> <artifactid>jackson-databind</artifactid> <version>${version.jackson}</version> </dependency> <dependency> <groupid>com.fasterxml.jackson.core</groupid> <artifactid>jackson-core</artifactid> <version>${version.jackson}</version> </dependency></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29</p>
+<p>3.下面是重点，Swagger所有API文档都在这里存储，添加Swagger配置类 创建一个配置类MySwaggerConfig，添加私有成员SpringSwaggerConfig，set方法使用@Autowired注解自动注入，使用@Bean注解添加SwaggerSpringMvcPlugin，并使用自定义的ApiInfo，SwaggerConfig类需要添加@Configuration以及@EnableSwagger<br>package com.edu.xk;import org.springframework.beans.factory.annotation.Autowired;import org.springframework.context.annotation.Bean;import org.springframework.context.annotation.Configuration;import org.springframework.web.servlet.config.annotation.EnableWebMvc;import com.mangofactory.swagger.configuration.SpringSwaggerConfig;import com.mangofactory.swagger.models.dto.ApiInfo;import com.mangofactory.swagger.plugin.EnableSwagger;import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;@Configuration@EnableSwagger@EnableWebMvcpublic class MySwaggerConfig { private SpringSwaggerConfig springSwaggerConfig; /<strong> <em> Required to autowire SpringSwaggerConfig </em>/ @Autowired public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) { this.springSwaggerConfig = springSwaggerConfig; } /</strong> <em> Every SwaggerSpringMvcPlugin bean is picked up by the swagger-mvc </em> framework - allowing for multiple swagger groups i.e. same code base <em> multiple swagger resource listings. </em>/ @Bean public SwaggerSpringMvcPlugin customImplementation() { // 暂时不用过滤 /<em>return new SwaggerSpringMvcPlugin(this.springSwaggerConfig).apiInfo(apiInfo()).includePatterns(“.</em>pet.<em>“);</em>/ return new SwaggerSpringMvcPlugin(this.springSwaggerConfig).apiInfo(apiInfo()); } private ApiInfo apiInfo() { ApiInfo apiInfo = new ApiInfo( “My Apps API Title”, “My Apps API Description”, “My Apps API terms of service”, “My Apps API Contact Email”, “My Apps API Licence Type”, “My Apps API License URL” ); return apiInfo; }}</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52</p>
+<p>官方原话： <em>The @EnableSwagger annotation, in this example, enables swagger-springmvc out of the box. The generated swagger json Resource Listing is available at /api-docs</em> 4.添加Controller:WebServiceForCSS，Swagger文档在此处添加<br>package com.edu.xk.webservice;import javax.servlet.http.HttpServletRequest;import org.springframework.stereotype.Controller;import org.springframework.web.bind.annotation.RequestMapping;import org.springframework.web.bind.annotation.RequestMethod;import org.springframework.web.bind.annotation.RequestParam;import org.springframework.web.bind.annotation.ResponseBody;import com.edu.xk.model.User;import com.wordnik.swagger.annotations.ApiOperation;import com.wordnik.swagger.annotations.ApiParam;import net.sf.json.JSONObject;/*<em> </em> @moudle: WebServiceForCSS <em> @version:v1.0 </em> @Description: TODO <em> @author: xukai </em> @date: 2016年12月1日 下午5:37:30 <em> </em>/@Controllerpublic class WebServiceForCSS { @ResponseBody @RequestMapping(value = “getUserById”, method = RequestMethod.GET, produces = {“application/json; charset=utf-8”,”application/xml”}) @ApiOperation(value = “通过ID查询USER信息”, httpMethod = “GET”, notes = “暂无”) public String getUserById( @ApiParam(required = true, name = “id”, value = “ID”) @RequestParam(value = “id”) String id,HttpServletRequest request) { User user = new User(); user.setId(id); user.setName(“测试人员”); user.setAge(25); JSONObject object = JSONObject.fromObject(user); return object.toString(); }}</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42</p>
+<p>5.配置文件修改 context加载的时候需要配置的文件，此处配置文件为application-config.xml<br>&lt;mvc:annotation-driven /&gt; <!-- mvc-config.xml中的可以去掉 --> &lt;context:component-scan base-package=”com.edu”/&gt; <bean class="com.edu.xk.configer.SwaggerConfig"></bean></p>
+<p>1<br>2<br>3</p>
+<p>1<br>2<br>3</p>
+<p>6.下载Swagger UI组件 去官网下载Zip包，或者在github上下载也可以，需要将dist文件夹下的所有文件的复制到webapp目录下。<br>7.修改Project Properties 将jdk1.5换成最新的本地的jdk,对应的<a href="http://lib.csdn.net/base/java" target="_blank" rel="noopener">Java </a>complier也改为对应的，还有maven包依赖也需要添加，不然启动的时候会找不到ContextLoader.class。<br>8.添加拦截器，不然无法访问.html后缀文件，在web.xml中添加</p>
+<p><servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.jpg</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.png</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.gif</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.ico</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.js</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.css</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.html</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.xls</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.doc</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.json</url-pattern> </servlet-mapping> <!-- 字体相关 开始 --> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.eot</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.svg</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern><em>.ttf</em></url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>.woff</url-pattern> </servlet-mapping> <servlet-mapping> <servlet-name>default</servlet-name> <url-pattern>*.woff2</url-pattern> </servlet-mapping> <!-- 字体相关 结束 --> <welcome-file-list> <welcome-file>index.html</welcome-file> <welcome-file>index.htm</welcome-file> <welcome-file>index.jsp</welcome-file> <welcome-file>default.html</welcome-file> <welcome-file>default.htm</welcome-file> <welcome-file>default.jsp</welcome-file> </welcome-file-list></p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52<br>53<br>54<br>55<br>56<br>57<br>58<br>59<br>60<br>61<br>62<br>63<br>64<br>65<br>66<br>67<br>68<br>69<br>70</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30<br>31<br>32<br>33<br>34<br>35<br>36<br>37<br>38<br>39<br>40<br>41<br>42<br>43<br>44<br>45<br>46<br>47<br>48<br>49<br>50<br>51<br>52<br>53<br>54<br>55<br>56<br>57<br>58<br>59<br>60<br>61<br>62<br>63<br>64<br>65<br>66<br>67<br>68<br>69<br>70</p>
+<p>运行项目，可以看到效果图： [图片上传中。。。（5）]可以看到，现在效果还是和官网上一样的。改为自己的API文档可以通过修改index.html中的url = “<a href="http://petstore.swagger.io/v2/swagger.json&quot;" target="_blank" rel="noopener">http://petstore.swagger.io/v2/swagger.json&quot;</a>;<br>或者直接修改访问的地址栏为：<a href="http://localhost:8080/SwaggerDemo/api-docs" target="_blank" rel="noopener">http://localhost:8080/SwaggerDemo/api-docs</a><br>原理分析<br>SpringMVC+Swagger其实就是在系统加载的时候，Swagger配置类去扫描所有添加注释的接口，并且储存起来通过下面地址进行访问，返回JSON数据，在前端界面显示出来 [图片上传中。。。（6）] 这里我在网上看到一个汉化的版本（<a href="http://blog.csdn.net/hel12he/article/details/46547863" target="_blank" rel="noopener">原效果</a>），下载了他工程，将他生成demo.json放入的我的工程中的webapp目录下，下面是效果图 [图片上传中。。。（7）]<br>遇到的问题<br>问题1：下载maven的jar包中途失败，工程会出错maven missing 解决方法：选中Project-&gt;右键maven-&gt;update project-&gt;选中Force update 如果此时依然有 missing的jar，按照 buildpath 提示的 jar包missing 路径，去 maven 本地仓库中对应位置（jar包后面有路径），删掉 该 jar 包的 xxx.lastUpdated 文件，之后，再重新执行 项目右键maven-&gt;update project<br>问题2：缺失jackson包会导致出现异常java.lang.NoClassDefFoundError: com/fasterxml/jackson/databind/ObjectMapper)<br>问题3：java.lang.ClassNotFoundException: org.springframework.web.util.Log4jConfigListen，因为工程没有引入maven中的jar包，解决办法：选中工程右键-&gt;Properties-&gt;Deployment Assembly-&gt;add-&gt;Java Build Path Entries-&gt;Maven Dependencies-&gt;OK<br>问题4：<strong>org.springframework.beans.factory.BeanCreationException</strong>，出现这个异常是因为SpringSwaggerConfig的私有成员RequestMappingHandlerMapping造成的，将&lt;mvc:annotation-driven /&gt;<br>放入到web.xml的context-param标签对应的配置文件application-config.xml中，完美解决，官网解释该标签作用为： <em>Required so swagger-springmvc can access spring’s RequestMappingHandlerMapping</em> 。<br>org.springframework.beans.factory.NoSuchBeanDefinitionException: Noqualifying bean of type[org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping]found for dependency [collection oforg.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping]:expected at least 1 bean which qualifies as autowire candidate forthis dependency. Dependency annotations:<a href="mailto:{@org.springframework.beans.factory.annotation.Autowired" target="_blank" rel="noopener">{@org.springframework.beans.factory.annotation.Autowired</a>(required=true)}</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</p>
+<p>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</p>
+<p><a href="https://github.com/springfox/springfox/blob/v1.0.2/README.md" target="_blank" rel="noopener">Swagger UI开发帮助</a></p>
+<p>Swagger Editor</p>
+<p>反正顺路，顺便的Editor也写完，Editor个人感觉就是一个文档编辑器，感觉SosoApi还是好些。试着在Swagger官网下载了一个Swagger Editor跑着玩了玩.下载swagger-editor.zip，解压到Tomcat的webapps文件夹中，来看一下效果图 [图片上传中。。。（8）]Swagger UI结合Swagger Editor更好用，但是在线编辑那个太卡了，备份一个本地的，以备不时只需。Swagger UI<br>关于Swagger UI官方解释是这样的：<strong><em>The Swagger UI is an open source project to visually render documentation for a Swagger defined API directly from the API’s Swagger specifcation</em></strong> <a href="http://swagger.io/" target="_blank" rel="noopener">官网地址</a> 下面是官方的效果图： </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/Mac【下用OracleSQLDeveloper连接Windows虚拟机的Oracle数据库】/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChinaArJun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/29/Mac【下用OracleSQLDeveloper连接Windows虚拟机的Oracle数据库】/" itemprop="url">Mac【用OracleSQLDeveloper连接Windows虚拟机的Oracle数据库】</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:04:34+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>因为在OS X中无法安装<a href="http://lib.csdn.net/base/oracle" target="_blank" rel="noopener">Oracle</a><a href="http://lib.csdn.net/base/mysql" target="_blank" rel="noopener">数据库</a>（除了雪豹系统）所以只能用虚拟机安装Oracle来替代。<br><a href="http://blog.sina.com.cn/s/blog_be59e93c0102uyhu.html" target="_blank" rel="noopener">Mac OS X 10.6 Snow Leopard x64 (雪豹) 安装 oracle</a> 虚拟机数据库和OS X之间的连接也没有说的很详细或者非常可行的教程，本文旨在帮助后继者来正确连接，免其麻烦。<br><strong>你需要的东西有：<a href="http://download.oracle.com/otn/java/sqldeveloper/sqldeveloper-4.1.3.20.78-macosx.app.zip" target="_blank" rel="noopener">OracleSQLDeveloper For OS X</a>以及已经安装好的Windows虚拟机和虚拟机上的Oracle数据库</strong><br>我使用的是PD11来装的Win8.1以及Oracle 11gR2 便捷版。</p>
+<p><strong>我们需要提前明白为什么我们尝试的经常失败：</strong><br>1、虚拟机和主机间的连接网络连接模式最好为桥接，侨接之后IP会发生改变，在这里必须要细心和清楚</p>
+<p>2、虚拟机(Win)防火墙要关闭 </p>
+<p>3、监听程序默认的是localhost，需要配置才能监听远程接入的程序， 而我使用的便捷版数据库没有Oracle Net Manager，只能在listener.ora文件当中配置。 </p>
+<p>4、需要添加一个有远程登陆权限的用户</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-dc2c374a84116aec.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="
+![Uploading 8368A7E8-6E74-481D-922B-38FB27410E71_850490.jpg . . .]"></p>
+<p>其中需要指明的是，主机名最好用IP地址来表示，而这个IP地址为数据库那个机器的IP地址，端口号一般都是1521 或者在listener.ora中有，其中地址和示例配置代码如下：<br>C:\oraclexe\app\oracle\product\11.2.0\server\network\ADMIN\listener.ora (记得更改读写权限，参照我上一篇博客)</p>
+<p>LISTENER = (DESCRIPTION_LIST = (DESCRIPTION = (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1)) (ADDRESS = (PROTOCOL = TCP)(HOST = MAC7F25)(PORT = 1521)) (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.100.103)(PORT = 1521))  ) )</p>
+<p>MAC7F25是我的虚拟机名称，而192.168.100.103为虚拟机在桥接后的IP<br>添加这行代码：<br>(ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.100.103)(PORT = 1521))</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-8a35a5f11e73bd10.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="8368A7E8-6E74-481D-922B-38FB27410E71.jpg"></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【在Eclipse中用JDBC连接MySQL数据库】/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChinaArJun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/29/JAVA【在Eclipse中用JDBC连接MySQL数据库】/" itemprop="url">JAVA【在Eclipse中用JDBC连接MySQL数据库】</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:04:16+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>1.准备工作: 准备相关的软件</p>
+<p><1>.MySQL 6.0<br>下载地址:<a href="http://dev.mysql.com/downloads/mysql/6.0.html" target="_blank" rel="noopener">http://dev.mysql.com/downloads/mysql/6.0.html</a></1></p>
+<p><2>.mysql-connector-java-5.1.6.zip<br>下载地址:<a href="http://dev.mysql.com/downloads/connector/j/5.1.html" target="_blank" rel="noopener">http://dev.mysql.com/downloads/connector/j/5.1.html</a></2></p>
+<p><3>.SQLyog MySQL GUI - Enterprise 6.54 (Stable)(官网地址，不过需注册，也可以直接百度一下)<br>下载地址:<a href="http://www.webyog.com/en/downloads.php" target="_blank" rel="noopener">http://www.webyog.com/en/downloads.php</a></3></p>
+<p>2.下载完之后开始进行安装 ,第一个是属于数据库软件,正常安装即可(端口默认3306，用户名root，当然也可以自己设置，建议默认安装)</p>
+<ol>
+<li><p>将JDBC解压缩到任意位置,找出mysql-connector-java-5.1.6-bin.jar文件，放在一个固定目录下，后面进行MySQL数据库连接需要加载它，其它文件都可删除。</p>
+</li>
+<li><p>安装SQLyog6.54软件，这是一款非常好的可视化操作MySQL的工具。（当然你也可以使用自己最习惯的方式在MySQL中建立建立一个测试数据库）。打开刚刚安装好的 SQLyog6.54,点continue,再NEW一个新连接，这里需要用到刚才所说的用户名密码，默认用户名root，密码是自己设置，这里暂且用1234，端口号为3306（默认），如做修改就输入你修改后的端口。点连接，之后的操作就相对容易，再可视化的窗口下，右键新建一个数据库，这里建一个mydb数据库。</p>
+</li>
+<li><p>打开Eclipse<br> a.新建工程-&gt; java -&gt; java project,起名为Test </p>
+<p> b.右键单击目录窗口中的Test, 选择Build Path -&gt;Configure Build Path…, 添加扩展jar文件,即把mysql-connector-java-5.1.6-bin.jar添加到其中,确定。</p>
+</li>
+<li><p>编写java代码来测试连接数据库<br>程序代码:<br>import java.sql.*;<br>public class Test {<br>public static void main(String[] srg) {<br>String driverName = “com.mysql.jdbc.Driver”;  //加载JDBC驱动<br>String dbURL = “jdbc:mysql://localhost:3306/mydb”;  //连接服务器和数据库sample<br>String userName = “root”;  //默认用户名<br>String userPwd = “1234”;  //密码<br>Connection dbConn;<br>try {<br>Class.forName(driverName);<br>dbConn = DriverManager.getConnection(dbURL, userName, userPwd);<br>System.out.println(“Connection Successful!”);  //如果连接成功控制台输出Connection Successful!<br>} catch (Exception e) {<br>e.printStackTrace();<br>}<br>}<br>}<br>总结<br>MySQL数据库的连接相对还是比较简单的，即使刚接触这方面的应用的，只要遵循这六步，半个小时内差不多都能搞定。<br>以前在这方面走过不少弯路，今天特别高兴能跟大家分享我的经验，希望对您数据库连接方面的快速入门会有所帮助！</p>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【有哪些适合新手练手的Java项目？】/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChinaArJun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/29/JAVA【有哪些适合新手练手的Java项目？】/" itemprop="url">JAVA【有哪些适合新手练手的Java项目？】</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:03:16+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Java作为一门古老的语言，已有20年左右的历史，这在发展日新月异的技术圈可以说是一个神话。虽然不少人曾抱怨Java语言就像老太太的裹脚布，又臭又长，有时写了500行都不能表达程序员的意图。但从市场上的招聘现状看，Java工程师依然有着其他语言不可取代的竞争优势。招聘情况请参考：<a href="https://zhuanlan.zhihu.com/p/21502019?refer=100offer" target="_blank" rel="noopener">为</a></p>
+<p>看到了这里，恭喜正式开始进入主题：适合新手练手的Java项目？ </p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-a1e01685622219e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="C9154343-0F98-4774-A1B0-C2EBA0BBDB13.png"></p>
+<p>源码下载（实例一）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/2358272909446144.htm" target="_blank" rel="noopener">jsp开发完整的博研图书馆后台管理系统，不使用框架开发的，太完美了</a><br>源码下载（实例二）：<br><a href="https://link.zhihu.com/?target=http%3A//download.csdn.net/detail/defonds/7123499" target="_blank" rel="noopener">javaWeb图书馆管理系统源码mysql版本</a><br>源码下载（实例三）<br><a href="https://link.zhihu.com/?target=https%3A//github.com/uboger/LibraryManager" target="_blank" rel="noopener">GitHub - uboger/LibraryManager: JAVA GUI 图书馆管理系统</a><br>源码下载（实例四）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/1993977042701312.htm" target="_blank" rel="noopener">java swing开发企业人事管理系统源代码下载</a></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-2e9fd0ffd70f69b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="D7B0A549-CB0A-4704-8606-353E81499F49.png"></p>
+<p>源码下载（实例一）：<a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/2813720957340672.htm" target="_blank" rel="noopener">java swing开发网络聊天室群聊系统,基于java多线程socket编程</a><br>源码下载（实例二）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/2476196100705280.htm" target="_blank" rel="noopener">java swing开发大猫聊天室源码，简单易懂，适合java swing初学者</a><br>源码下载（实例三）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/2681158015126528.htm" target="_blank" rel="noopener">java websocket开发简单聊天室系统，实现群聊与一对一单人聊天案例</a><br>源码下载（实例四）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/2920853761723392.htm" target="_blank" rel="noopener">jsp开发简单聊天室demo-分享</a></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-68e06ee3777393c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AB4E245B-91DF-434F-A1C7-3AE76E283F57.png"></p>
+<p>源码下载（一）：<br><a href="https://link.zhihu.com/?target=http%3A//download.csdn.net/detail/w364483790/598859" target="_blank" rel="noopener">java通讯录实现了添加删除和查找功能</a><br>源码下载（二）：<br><a href="https://link.zhihu.com/?target=http%3A//download.csdn.net/detail/laudukang/8341541" target="_blank" rel="noopener">JAVA版通讯录管理系统课程设计源码</a><br>源码下载（三）：<br><a href="https://link.zhihu.com/?target=http%3A//download.csdn.net/detail/k4duizhang/2572237" target="_blank" rel="noopener">Java Swing界面.完美设计通讯录..有需要的下</a></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-938a72554c06b156.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="C4B55EBC-9908-493C-8D9A-32502E26BA5E.png"></p>
+<p>源码下载（一）：<br><a href="https://link.zhihu.com/?target=http%3A//download.csdn.net/detail/csyrooney/1692151" target="_blank" rel="noopener">JAVA坦克大战+源代码（适合初学者）</a><br>源码下载（二）：<br><a href="https://link.zhihu.com/?target=https%3A//github.com/wangzhengyi/TankWar" target="_blank" rel="noopener">GitHub - wangzhengyi/TankWar: 用J2SE写的一个坦克大战小游戏，巩固一下java基础</a></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-4472d559df9e9023.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="51847F0C-4D8E-4D66-8501-CDEC911944B9.png"></p>
+<p>源码下载（一）：<br><a href="https://link.zhihu.com/?target=http%3A//download.csdn.net/detail/kavilee11/4079842" target="_blank" rel="noopener">俄罗斯方块 JAVA版</a><br>源码下载（二）：<br><a href="https://link.zhihu.com/?target=https%3A//github.com/FieldSoft-HelloClyde/Tetris-Swing" target="_blank" rel="noopener">GitHub - FieldSoft-HelloClyde/Tetris-Swing: Swing编写的俄罗斯方块</a><br>源码下载（三）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/2855443151621120.htm" target="_blank" rel="noopener">java swing开发的俄罗斯方块游戏，包含完整代码+详细注释</a></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-6de10bf9fef4cd2c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="1ECD6359-BE19-4E66-BF47-1657758A04D7.png"></p>
+<p>源码下载（一）：<br><a href="https://link.zhihu.com/?target=http%3A//blog.csdn.net/cnlht/article/details/8176130" target="_blank" rel="noopener">Java实践（十一）——五子棋</a><br>源码下载（二）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/2937407256464384.htm" target="_blank" rel="noopener">java swing开发的五子棋小游戏源码</a><br>源码下载（三）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/1550463383030784.htm" target="_blank" rel="noopener">java swing开发单机版五子棋源代码下载</a><br>源码下载（四）：<br><a href="https://link.zhihu.com/?target=http%3A//download.csdn.net/detail/longyin415/2267863" target="_blank" rel="noopener">Java五子棋算法和代码</a></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-1f1fb3de4ebafef7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="9A7FEEB9-6874-4ECA-8253-80FC7DD87579.png"></p>
+<p>源码下载（一）：<a href="https://link.zhihu.com/?target=http%3A//blog.csdn.net/cnlht/article/details/8205733" target="_blank" rel="noopener">Java实践（十二）——中国象棋</a></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-6cfa3470adfa6472.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="C9191E15-EACE-4A24-AB0F-4AD9943D8B39.png"></p>
+<p>源码下载（实例一）：<br><a href="https://link.zhihu.com/?target=http%3A//download.csdn.net/detail/java_cxrs/1005980" target="_blank" rel="noopener">JAVA贪吃蛇源代码</a><br>源码下载（实例二）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/2255780075867136.htm" target="_blank" rel="noopener">java swing编写的3个小游戏程序源码，俄罗斯方块，贪吃蛇和坦克大战</a><br>源码下载（实例三）：<br><a href="https://link.zhihu.com/?target=http%3A//www.zuidaima.com/share/1737620634422272.htm" target="_blank" rel="noopener">java贪吃蛇源代码</a> 、  <a href="https://link.zhihu.com/?target=http%3A//blog.csdn.net/yaerfeng/article/details/23254623" target="_blank" rel="noopener">java贪吃蛇源代码</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2018/11/29/JAVA【关于Eclipse不自动弹出提示的解决办法】/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ChinaArJun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/29/JAVA【关于Eclipse不自动弹出提示的解决办法】/" itemprop="url">JAVA【关于Eclipse不自动弹出提示的解决办法】</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-29T22:03:01+08:00">
+                2018-11-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Eclipse代码里面的代码提示功能默认是关闭的，只有输入“.”的时候才会提示功能<br>Win配置和Mac配置基本一致.</p>
+<p>用过其他编辑器的用户可能不太习惯这种，普遍编辑器是输入任何字母都会提示，<br>下面说一下如何修改eclipse配置，开启代码自动提示功能打开 Eclipse  -&gt; Window -&gt; Perferences -&gt; Java -&gt; Editor -&gt; Content Assist，在右边最下面一栏找到 auto-Activation ，下面有三个选项，找到第二个“Auto activation triggers for Java：”选项在其后的文本框中会看到一个“.”存在。</p>
+<blockquote>
+<p>这表示：只有输入“.”之后才会有代码提示和自动补全，我们要修改的地方就是这。把该文本框中的“.”换掉，换成“abcdefghijklmnopqrstuvwxyz.”，这样，你在Eclipse里面写Java代码就可以做到按“abcdefghijklmnopqrstuvwxyz.”中的任意一个里字符都会有代码提示。</p>
+</blockquote>
+<p>在编写代码时敲出几个字符的情况下就迅速地完成代码，那是一件很爽的事。可是默认情况下，eclipse只有在你打出’.’（点字符）的时候，才会弹出自动补全窗口给你选择。这在大部分时候是完全不够用的。</p>
+<p>由于eclipse 本身有很多选项是默认关闭的，这样开发者只能自己去手动配置一下.</p>
+<p>那么如何配置eclipse的代码自动提示功能呢？</p>
+<blockquote>
+<p>1、Window ——&gt; Preferences ——&gt; Java ——&gt; Editor ——&gt; Content Assist</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-4a6fa560d6bdfa59.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="B1712935-519A-4046-8014-1917BE025FC0.png"><br>1)将图中复选框勾上</p>
+<p>2)将自动补全延迟的时间[auto activation delay(ms)]默认是200ms, 可以将时间缩短一些,比如我设置2ms.</p>
+<p>3)[auto activation triggers for java]自动补全触发器,默认是”.”, 这个位置可以设置成26个字母外加’.’：.abcdefghijklmnopqrstuvwxyz(不区分大小写)</p>
+<p>4)[auto activation triggers for javadoc]javadoc的触发器,默认是”@#”.</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-dc3315691bd827c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="64DF6577-B4D2-43DB-87BB-CE73C20FABEF.png"></p>
+<blockquote>
+<p>2、eclipse的代码自动提示功能设置成功后：</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/2692013-e87eb7cf5a3a5353.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="B2640F61-7EFD-41C7-9B54-9C22CDCB8BD3.png"></p>
+<p>#####可是eclipse不允许输入这么的字符，文本框中最多允许输入4个字符，因此要通过修改配置文件的方法实现，具体操作步骤如下</p>
+<ol>
+<li><p>打开Eclipse，然后“window”→“Preferences”</p>
+</li>
+<li><p>选择“java”，展开，“Editor”，选择“Content Assist”。</p>
+</li>
+</ol>
+<p>3.选择“Content Assist”，然后看到右边，右边的“Auto Activation”下面的“Auto Activation triggers for java”这个选项。其实就是指触发代码提示的就是“.”这个符号。</p>
+<p>4.“Auto Activation triggers for java”这个选项，在“.”后加abc字母，方便后面的查找修改。然后“apply”，点击“OK”。</p>
+<ol>
+<li><p>然后，“File”→“Export”，在弹出的窗口中选择“General”→“Perferences”，点击“下一步”。</p>
+</li>
+<li><p>选择导出文件路径，本人导出到桌面，输入“abc”作为文件名，点击“保存”。</p>
+</li>
+<li><p>在桌面找到刚在保存的文件“abc.epf”,右键选择“用记事本打开”。</p>
+</li>
+<li><p>按“ctrl + F”快捷键，输入“.abc”，点击“查找下一个”。</p>
+</li>
+<li><p>查找到“.abc”的配置信息如下：如下：</p>
+</li>
+<li><p>把“.abc”改成“.abcdefghijklmnopqrstuvwxyz(,”，保存，关闭“test.epf”。</p>
+</li>
+<li><p>回到MyEclipse界面，“File”→“Import”，在弹出的窗口中选择“Perferences”，点击“下一步”，选</p>
+</li>
+</ol>
+<p>择刚在已经修改的“abc.epf”文件，点击“打开”，点击“Finish”。该步骤和上面 的导出步骤类似。</p>
+<p>12.修改完毕，测试一下就行了。</p>
+
           
         
       
@@ -659,6 +1749,10 @@
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -702,14 +1796,32 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">23</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
             
 
             
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                
+              </div>
             
 
           </nav>
