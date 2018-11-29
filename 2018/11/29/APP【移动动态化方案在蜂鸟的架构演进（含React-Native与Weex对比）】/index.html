@@ -111,7 +111,7 @@
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2018-11-29T14:07:45.386Z">
+<meta property="og:updated_time" content="2018-11-29T15:32:10.622Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="APP【移动动态化方案在蜂鸟的架构演进（含React Native与Weex对比）】">
 <meta name="twitter:description" content="最近在准备学习一门跨平台语言时候表示很纠结，学习一门语言时间紧迫，   必须学到有用又适应市场的一门语言   直到看到这篇文章后就恍然大悟了，刚好饿了么也是一路采坑过来的，必须借鉴学习一下，说明最值得学习的还是阿里系Weex，体验什么的也比RN要好不少 当下，移动动态化已经成为各大公司都回避不了的问题，产品的快速迭代对技术提出了更高的要求，而移动端的动态化方案也是层出不穷：Hypid、结构化 Na">
@@ -331,6 +331,16 @@
 
           
             
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/11/29/APP【移动动态化方案在蜂鸟的架构演进（含React-Native与Weex对比）】/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/11/29/APP【移动动态化方案在蜂鸟的架构演进（含React-Native与Weex对比）】/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -489,7 +499,6 @@
 <p>以上内容根据许锦洋老师在 WOTA2017 “移动端架构演进”专场的演讲内容整理。</p>
 <p><a href="http://s2.51cto.com/wyfs02/M02/00/17/wKiom1mWQOuQbvEsAABT9GSW200927.jpg" target="_blank" rel="noopener"><img src="https://upload-images.jianshu.io/upload_images/2692013-6ecdcdbf7956a0d2.jpeg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.jpeg"></a> </p>
 <p>负责饿了么蜂鸟 APP 的架构、研发等工作。拥有饿了么商家、风行者、蜂鸟众包等多款 APP 开发工作经历，并从 0 开始架构和开发了整个蜂鸟团队 APP。目前关注的技术方向为移动跨平台技术方案、移动端架构、移动端性能优化等。</p>
-<p>【转载 51CTO原创稿件】</p>
 
       
     </div>
@@ -555,6 +564,9 @@
 
           
 
+  
+    <div class="comments" id="comments">
+    </div>
   
 
 
@@ -652,9 +664,9 @@
                   </span>
                 
                   <span class="links-of-author-item">
-                    <a href="https://weibo.com/u/2464411825" target="_blank" title="Weibo">
+                    <a href="mailto:llxwxx@gmail.com" target="_blank" title="Email">
                       
-                        <i class="fa fa-fw fa-globe"></i>Weibo</a>
+                        <i class="fa fa-fw fa-envelope"></i>Email</a>
                   </span>
                 
                   <span class="links-of-author-item">
@@ -867,6 +879,28 @@
 
 
 
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'WYOj8y3I3yXSB2u3fz4TSTQ9-gzGzoHsz',
+        appKey: 'YN9r9OWJvbTPssfBgFNi06Yg',
+        placeholder: '评论一下吧！',
+        avatar:'/images/logo.png',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
 
 
 

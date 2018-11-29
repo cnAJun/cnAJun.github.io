@@ -311,6 +311,16 @@
 
           
             
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/11/29/JAVA【Java-—-手把手教你整合最简洁的SSM框架：SpringMVC-Spring-MyBatis】/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/11/29/JAVA【Java-—-手把手教你整合最简洁的SSM框架：SpringMVC-Spring-MyBatis】/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -405,6 +415,9 @@
           
 
   
+    <div class="comments" id="comments">
+    </div>
+  
 
 
 
@@ -492,9 +505,9 @@
                   </span>
                 
                   <span class="links-of-author-item">
-                    <a href="https://weibo.com/u/2464411825" target="_blank" title="Weibo">
+                    <a href="mailto:llxwxx@gmail.com" target="_blank" title="Email">
                       
-                        <i class="fa fa-fw fa-globe"></i>Weibo</a>
+                        <i class="fa fa-fw fa-envelope"></i>Email</a>
                   </span>
                 
                   <span class="links-of-author-item">
@@ -691,6 +704,28 @@
 
 
 
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'WYOj8y3I3yXSB2u3fz4TSTQ9-gzGzoHsz',
+        appKey: 'YN9r9OWJvbTPssfBgFNi06Yg',
+        placeholder: '评论一下吧！',
+        avatar:'/images/logo.png',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
 
 
 
