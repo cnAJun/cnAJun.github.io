@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
     <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
     
-    <title>解决Mac版本 Sublime text3安装Package Control问题 | 阿俊的博客</title>
+    <title>ios | 阿俊的博客</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
     <meta name="keywords" content="罗连喜, 大数据, ArJun, iOS, Java, 移动开发" >
     <meta name="description" content="罗连喜的个人博客" >
@@ -56,7 +56,7 @@
         <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
         <ul class="menu hidden" id="JELON__menu">
             
-            <li rel="/2018/03/25/02web解决Mac版本 Sublime text3安装Package Control问题/index.html" class="item ">
+            <li rel="/2018/11/29/ios/index.html" class="item ">
                 <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
             </li>
             
@@ -98,53 +98,25 @@
 <!-- 文章 -->
 <article class="post article">
     <header class="text-center">
-        <h3 class="post-title"><span>解决Mac版本 Sublime text3安装Package Control问题</span></h3>
+        <h3 class="post-title"><span>ios</span></h3>
     </header>
     <p class="post-meta text-center">
-        Jelon 发表于
-        <time datetime="2018-03-24T16:03:14.610Z">2018-03-25</time>
+        ChinaArJun 发表于
+        <time datetime="2018-11-29T08:56:13.000Z">2018-11-29</time>
     </p>
     <div class="post-content">
-        <h4 id="准备学习Weex开发，因为使用sublime比较方便轻量，就在这个上面安装些插件吧。"><a href="#准备学习Weex开发，因为使用sublime比较方便轻量，就在这个上面安装些插件吧。" class="headerlink" title="准备学习Weex开发，因为使用sublime比较方便轻量，就在这个上面安装些插件吧。"></a>准备学习Weex开发，因为使用sublime比较方便轻量，就在这个上面安装些插件吧。</h4><h4 id="其实自己遇到了较多的坑，还是不仔细哈哈"><a href="#其实自己遇到了较多的坑，还是不仔细哈哈" class="headerlink" title="其实自己遇到了较多的坑，还是不仔细哈哈"></a>其实自己遇到了较多的坑，还是不仔细哈哈</h4><h2 id="1-下载Sublime3"><a href="#1-下载Sublime3" class="headerlink" title="1.下载Sublime3"></a>1.下载Sublime3</h2><p><a href="https://www.sublimetext.com/3" target="_blank" rel="noopener">https://www.sublimetext.com/3</a></p>
-<h2 id="2-安装Package-Control"><a href="#2-安装Package-Control" class="headerlink" title="2.安装Package Control"></a>2.安装Package Control</h2><p>在线安装： <a href="https://packagecontrol.io/installation" target="_blank" rel="noopener">https://packagecontrol.io/installation</a> 因为网络原因可能失败。</p>
-<p>离线安装：</p>
-<p>下载地址： <a href="https://github.com/wbond/package_control" target="_blank" rel="noopener">https://github.com/wbond/package_control</a></p>
-<p>1.把下载好的zip包解压，重命名为Package Control。</p>
-<p>2.打开Sublime3</p>
-<pre><code>菜单-&gt;Preferences-&gt;Browse Packages...然后复制Package Control文件夹到该目录、  MAC版本注意：
+        <p>简介<br>在线编辑和发布hexo博客。<br>github地址：<a href="https://github.com/jaredly/hexo-admin" target="_blank" rel="noopener">https://github.com/jaredly/hexo-admin</a></p>
+<p>安装<br>进入hexo源文件目录，执行命令：</p>
+<p>npm install –save hexo-admin<br>hexo server -d<br>open <a href="http://localhost:4000/admin/" target="_blank" rel="noopener">http://localhost:4000/admin/</a><br>配置<br>编辑根目录下：_config.yml文件，添加：</p>
+<p>admin:<br>  username: myfavoritename<br>  password_hash: be121740bf988b2225a313fa1f107ca1<br>  secret: a secret something<br>其中：<br>username为登录的用户名，password_hash为密码的bcrypt哈希值，secret用于使cookie安全,可以尽可能复杂。</p>
+<p>password_hash的生成<br>首先需安装模块：sudo npm install bcrypt-nodejs<br>执行：</p>
+<p>$ node</p>
+<blockquote>
+<p>const bcrypt = require(‘bcrypt-nodejs’)<br>bcrypt.hashSync(‘your_password’)<br>其中的your_password为登录密码。</p>
+</blockquote>
+<p>若部署到远程服务器，就可以使用：<a href="http://ip:4000/admin/进行访问，在线发布hexo博客。" target="_blank" rel="noopener">http://ip:4000/admin/进行访问，在线发布hexo博客。</a></p>
+<p>本片博客即是通过hexo-admin在线编辑并发布的。</p>
 
- Mac位置:/Users/用户名/Library/Application Support/Sublime Text 3/Installed Packages
-
- 3.重启Sublime3,如果菜单-&gt;Preferences有Package Setting和Package Control就说明安装成功。
-
- 4.Ctrl+Shift+p输入install选中Install Package回车就可以安装插件。
-
- 然后，你会发现遇到问题，也许是“There Are No Packages Available For Installation”
-
- 不要慌张
-
- 网上说了挺多原因，简单例举一下：
-
- 1、IPV6的问题
-
- 2、无法打开网址[https://packagecontrol.io/channel_v3.json](https://packagecontrol.io/channel_v3.json)导致访问不了
-
- 简单试一下都不行，最后我经过实验得出原因是：官方提供的Package Control就是不能用。将官方的那个Package Control删除了，自己进行添加Package Control便可以了！
-
- 具体步骤：
-
- 1、Package Control下载网址：[Package Control下载链接](https://github.com/wbond/sublime_package_control)
-
- 下载之后将其解压后，将解压文件重新命名为：Package Control
-
- 严格按照上面明明，首字母记住要大些！！！
-
- 2、打开Sublime，点击：首选项-&gt;浏览程序包，便会打开一个文件夹！
-
- 然后删除这个文件夹中已有的”Package Control文件夹”，将刚才自己下载好的并且重新命名的Package Control复制到该文件夹下，然后重新启动Sublime，这样便可以使用Package Control来安装其他插件了！
-
- 这样就能解决问题了。然后安装自己想要的插件。各种高亮都没有问题
-</code></pre>
     </div>
     <p class="post-meta">
         <span class="post-cat">分类：
@@ -176,20 +148,16 @@
     
     <span class="prev fl">
         上一篇<br >
-        <a href="/2018/11/29/ios/">
-            
-                ios
-            
-        </a>
+        <a href="javascript: void(0);">没有上一篇了</a>
     </span>
     
 
     
     <span class="next fr">
         下一篇<br >
-        <a href="/2018/03/25/01ios-Job-interview/">
+        <a href="/2018/03/25/02web解决Mac版本 Sublime text3安装Package Control问题/">
             
-                面试之 - Socket网络编程，TCP/IP和Http等网络协议理解
+                解决Mac版本 Sublime text3安装Package Control问题
             
         </a>
     </span>
@@ -266,7 +234,7 @@
   <script>
   JELON.Comment({
     container: 'comments',
-    label: '02web解决Mac版本 Sublime text3安装Package Control问题' || '2018/03/25/02web解决Mac版本 Sublime text3安装Package Control问题/',
+    label: 'ios' || '2018/11/29/ios/',
     owner: 'jangdelong',
     repo: 'blog_comments',
     clientId: 'b08ed25e52c57993e69c',
