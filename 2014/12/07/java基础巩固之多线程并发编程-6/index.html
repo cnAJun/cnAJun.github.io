@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.png?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="多线程," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="阿俊的博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="多线程-单例 单例设计模式：保证类在内存中只有一个对象。  如何保证类在内存中只有一个对象呢？  (1)控制类的创建，不让其他类来创建本类的对象。private (2)在本类中定义一个本类的对象。Singleton s; (3)提供公共的访问方式。  public static Singleton getInstance(){return s}">
+<meta name="keywords" content="多线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java基础巩固之多线程线程通信(6)">
+<meta property="og:url" content="github.com:ChinaArJun/ChinaArJun.github.io.git/2014/12/07/java基础巩固之多线程并发编程-6/index.html">
+<meta property="og:site_name" content="阿俊的博客">
+<meta property="og:description" content="多线程-单例 单例设计模式：保证类在内存中只有一个对象。  如何保证类在内存中只有一个对象呢？  (1)控制类的创建，不让其他类来创建本类的对象。private (2)在本类中定义一个本类的对象。Singleton s; (3)提供公共的访问方式。  public static Singleton getInstance(){return s}">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-12-02T17:28:51.038Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java基础巩固之多线程线程通信(6)">
+<meta name="twitter:description" content="多线程-单例 单例设计模式：保证类在内存中只有一个对象。  如何保证类在内存中只有一个对象呢？  (1)控制类的创建，不让其他类来创建本类的对象。private (2)在本类中定义一个本类的对象。Singleton s; (3)提供公共的访问方式。  public static Singleton getInstance(){return s}">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2014/12/07/java基础巩固之多线程并发编程-6/"/>
+
+
+
+
+
+  <title>java基础巩固之多线程线程通信(6) | 阿俊的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">阿俊的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">每天成长一点点</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="github.com:ChinaArJun/ChinaArJun.github.io.git/2014/12/07/java基础巩固之多线程并发编程-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="iOS阿俊">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿俊的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">java基础巩固之多线程线程通信(6)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-12-07T00:58:00+08:00">
+                2014-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程语言/" itemprop="url" rel="index">
+                    <span itemprop="name">编程语言</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2014/12/07/java基础巩固之多线程并发编程-6/" class="leancloud_visitors" data-flag-title="java基础巩固之多线程线程通信(6)">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="多线程-单例"><a href="#多线程-单例" class="headerlink" title="多线程-单例"></a>多线程-单例</h3><ul>
+<li><p>单例设计模式：保证类在内存中只有一个对象。</p>
+</li>
+<li><p>如何保证类在内存中只有一个对象呢？</p>
+<ul>
+<li>(1)控制类的创建，不让其他类来创建本类的对象。private</li>
+<li>(2)在本类中定义一个本类的对象。Singleton s;</li>
+<li>(3)提供公共的访问方式。  public static Singleton getInstance(){return s}<a id="more"></a></li>
+</ul>
+</li>
+<li>单例写法两种：<ul>
+<li>(1)饿汉式 开发用这种方式。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//饿汉式</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">	<span class="comment">//1,私有构造函数</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">	<span class="comment">//2,创建本类对象</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Singleton s = <span class="keyword">new</span> Singleton();</span><br><span class="line">	<span class="comment">//3,对外提供公共的访问方法</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> s;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"11111111111"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(2)懒汉式 面试写这种方式。多线程的问题？</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//懒汉式,单例的延迟加载模式</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">	<span class="comment">//1,私有构造函数</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">	<span class="comment">//2,声明一个本类的引用</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Singleton s;</span><br><span class="line">	<span class="comment">//3,对外提供公共的访问方法</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(s == <span class="keyword">null</span>)</span><br><span class="line">			<span class="comment">//线程1,线程2</span></span><br><span class="line">			s = <span class="keyword">new</span> Singleton();</span><br><span class="line">		<span class="keyword">return</span> s;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"11111111111"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(3)第三种格式</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton s = <span class="keyword">new</span> Singleton();<span class="comment">//final是最终的意思,被final修饰的变量不可以被更改</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="多线程-Runtime类"><a href="#多线程-Runtime类" class="headerlink" title="多线程-Runtime类"></a>多线程-Runtime类</h3><ul>
+<li>Runtime类是一个单例类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Runtime r = Runtime.getRuntime();</span><br><span class="line"><span class="comment">//r.exec("shutdown -s -t 300");		//300秒后关机</span></span><br><span class="line">r.exec(<span class="string">"shutdown -a"</span>);				<span class="comment">//取消关机</span></span><br></pre></td></tr></table></figure>
+<h3 id="多线程-Timer"><a href="#多线程-Timer" class="headerlink" title="多线程-Timer"></a>多线程-Timer</h3><ul>
+<li>Timer类:计时器</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Demo5_Timer</span> </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 * 计时器</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@throws</span> InterruptedException </span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">		Timer t = <span class="keyword">new</span> Timer();</span><br><span class="line">		t.schedule(<span class="keyword">new</span> MyTimerTask(), <span class="keyword">new</span> Date(<span class="number">114</span>,<span class="number">9</span>,<span class="number">15</span>,<span class="number">10</span>,<span class="number">54</span>,<span class="number">20</span>),<span class="number">3000</span>);</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">			System.out.println(<span class="keyword">new</span> Date());</span><br><span class="line">			Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyTimerTask</span> <span class="keyword">extends</span> <span class="title">TimerTask</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"起床背英语单词"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="多线程-两个线程间的通信"><a href="#多线程-两个线程间的通信" class="headerlink" title="多线程-两个线程间的通信"></a>多线程-两个线程间的通信</h3><ul>
+<li>1.什么时候需要通信<ul>
+<li>多个线程并发执行时, 在默认情况下CPU是随机切换线程的</li>
+<li>如果我们希望他们有规律的执行, 就可以使用通信, 例如每个线程执行一次打印</li>
+</ul>
+</li>
+<li>2.怎么通信<ul>
+<li>如果希望线程等待, 就调用wait()</li>
+<li>如果希望唤醒等待的线程, 就调用notify();</li>
+<li>这两个方法必须在同步代码中执行, 并且使用同步锁对象来调用</li>
+</ul>
+</li>
+</ul>
+<h3 id="多线程-三个或三个以上间的线程通信"><a href="#多线程-三个或三个以上间的线程通信" class="headerlink" title="多线程-三个或三个以上间的线程通信"></a>多线程-三个或三个以上间的线程通信</h3><ul>
+<li>多个线程通信的问题<ul>
+<li>notify()方法是随机唤醒一个线程</li>
+<li>notifyAll()方法是唤醒所有线程</li>
+<li>JDK5之前无法唤醒指定的一个线程</li>
+<li>如果多个线程之间通信, 需要使用notifyAll()通知所有线程, 用while来反复判断条件<h3 id="多线程-JDK1-5的新特性互斥锁"><a href="#多线程-JDK1-5的新特性互斥锁" class="headerlink" title="多线程-JDK1.5的新特性互斥锁"></a>多线程-JDK1.5的新特性互斥锁</h3></li>
+</ul>
+</li>
+<li>1.同步<ul>
+<li>使用ReentrantLock类的lock()和unlock()方法进行同步</li>
+</ul>
+</li>
+<li>2.通信<ul>
+<li>使用ReentrantLock类的newCondition()方法可以获取Condition对象</li>
+<li>需要等待的时候使用Condition的await()方法, 唤醒的时候用signal()方法</li>
+<li>不同的线程使用不同的Condition, 这样就能区分唤醒的时候找哪个线程了</li>
+</ul>
+</li>
+</ul>
+<h3 id="多线程-线程组的概述和使用"><a href="#多线程-线程组的概述和使用" class="headerlink" title="多线程-线程组的概述和使用"></a>多线程-线程组的概述和使用</h3><ul>
+<li>A:线程组概述<ul>
+<li>Java中使用ThreadGroup来表示线程组，它可以对一批线程进行分类管理，Java允许程序直接对线程组进行控制。</li>
+<li>默认情况下，所有的线程都属于主线程组。<ul>
+<li>public final ThreadGroup getThreadGroup()//通过线程对象获取他所属于的组</li>
+<li>public final String getName()//通过线程组对象获取他组的名字</li>
+</ul>
+</li>
+<li>我们也可以给线程设置分组<ul>
+<li>1,ThreadGroup(String name) 创建线程组对象并给其赋值名字</li>
+<li>2,创建线程对象</li>
+<li>3,Thread(ThreadGroup?group, Runnable?target, String?name) </li>
+<li>4,设置整组的优先级或者守护线程</li>
+</ul>
+</li>
+<li>B:案例演示<ul>
+<li>线程组的使用,默认是主线程组</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">		MyRunnable mr = <span class="keyword">new</span> MyRunnable();</span><br><span class="line">		Thread t1 = <span class="keyword">new</span> Thread(mr, <span class="string">"张三"</span>);</span><br><span class="line">		Thread t2 = <span class="keyword">new</span> Thread(mr, <span class="string">"李四"</span>);</span><br><span class="line">		<span class="comment">//获取线程组</span></span><br><span class="line">		<span class="comment">// 线程类里面的方法：public final ThreadGroup getThreadGroup()</span></span><br><span class="line">		ThreadGroup tg1 = t1.getThreadGroup();</span><br><span class="line">		ThreadGroup tg2 = t2.getThreadGroup();</span><br><span class="line">		<span class="comment">// 线程组里面的方法：public final String getName()</span></span><br><span class="line">		String name1 = tg1.getName();</span><br><span class="line">		String name2 = tg2.getName();</span><br><span class="line">		System.out.println(name1);</span><br><span class="line">		System.out.println(name2);</span><br><span class="line">		<span class="comment">// 通过结果我们知道了：线程默认情况下属于main线程组</span></span><br><span class="line">		<span class="comment">// 通过下面的测试，你应该能够看到，默任情况下，所有的线程都属于同一个组</span></span><br><span class="line">		System.out.println(Thread.currentThread().getThreadGroup().getName());</span><br><span class="line"></span><br><span class="line">	* 自己设定线程组</span><br><span class="line">* 			</span><br><span class="line">		<span class="comment">// ThreadGroup(String name)</span></span><br><span class="line">		ThreadGroup tg = <span class="keyword">new</span> ThreadGroup(<span class="string">"这是一个新的组"</span>);</span><br><span class="line"></span><br><span class="line">		MyRunnable mr = <span class="keyword">new</span> MyRunnable();</span><br><span class="line">		<span class="comment">// Thread(ThreadGroup group, Runnable target, String name)</span></span><br><span class="line">		Thread t1 = <span class="keyword">new</span> Thread(tg, mr, <span class="string">"张三"</span>);</span><br><span class="line">		Thread t2 = <span class="keyword">new</span> Thread(tg, mr, <span class="string">"李四"</span>);</span><br><span class="line">		</span><br><span class="line">		System.out.println(t1.getThreadGroup().getName());</span><br><span class="line">		System.out.println(t2.getThreadGroup().getName());</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//通过组名称设置后台线程，表示该组的线程都是后台线程</span></span><br><span class="line">		tg.setDaemon(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="多线程-线程的五种状态"><a href="#多线程-线程的五种状态" class="headerlink" title="多线程-线程的五种状态"></a>多线程-线程的五种状态</h3><ul>
+<li>看图说话</li>
+<li>新建,就绪,运行,阻塞,死亡</li>
+</ul>
+<h3 id="多线程-线程池的概述和使用"><a href="#多线程-线程池的概述和使用" class="headerlink" title="多线程-线程池的概述和使用"></a>多线程-线程池的概述和使用</h3><ul>
+<li>A:线程池概述<ul>
+<li>程序启动一个新线程成本是比较高的，因为它涉及到要与操作系统进行交互。而使用线程池可以很好的提高性能，尤其是当程序中要创建大量生存期很短的线程时，更应该考虑使用线程池。线程池里的每一个线程代码结束后，并不会死亡，而是再次回到线程池中成为空闲状态，等待下一个对象来使用。在JDK5之前，我们必须手动实现自己的线程池，从JDK5开始，Java内置支持线程池</li>
+</ul>
+</li>
+<li>B:内置线程池的使用概述<ul>
+<li>JDK5新增了一个Executors工厂类来产生线程池，有如下几个方法<ul>
+<li>public static ExecutorService newFixedThreadPool(int nThreads)</li>
+<li>public static ExecutorService newSingleThreadExecutor()</li>
+<li>这些方法的返回值是ExecutorService对象，该对象表示一个线程池，可以执行Runnable对象或者Callable对象代表的线程。它提供了如下方法</li>
+<li>Future&lt;?&gt; submit(Runnable task)</li>
+<li><t> Future<t> submit(Callable<t> task)</t></t></t></li>
+</ul>
+</li>
+<li>使用步骤：<ul>
+<li>创建线程池对象</li>
+<li>创建Runnable实例</li>
+<li>提交Runnable实例</li>
+<li>关闭线程池</li>
+</ul>
+</li>
+<li>C:案例演示<ul>
+<li>提交的是Runnable</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// public static ExecutorService newFixedThreadPool(int nThreads)</span></span><br><span class="line">ExecutorService pool = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 可以执行Runnable对象或者Callable对象代表的线程</span></span><br><span class="line">pool.submit(<span class="keyword">new</span> MyRunnable());</span><br><span class="line">pool.submit(<span class="keyword">new</span> MyRunnable());</span><br><span class="line"></span><br><span class="line"><span class="comment">//结束线程池</span></span><br><span class="line">pool.shutdown();</span><br></pre></td></tr></table></figure>
+<h3 id="多线程-多线程程序实现的方式3"><a href="#多线程-多线程程序实现的方式3" class="headerlink" title="多线程-多线程程序实现的方式3"></a>多线程-多线程程序实现的方式3</h3><ul>
+<li>提交的是Callable</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建线程池对象</span></span><br><span class="line">ExecutorService pool = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 可以执行Runnable对象或者Callable对象代表的线程</span></span><br><span class="line">Future&lt;Integer&gt; f1 = pool.submit(<span class="keyword">new</span> MyCallable(<span class="number">100</span>));</span><br><span class="line">Future&lt;Integer&gt; f2 = pool.submit(<span class="keyword">new</span> MyCallable(<span class="number">200</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// V get()</span></span><br><span class="line">Integer i1 = f1.get();</span><br><span class="line">Integer i2 = f2.get();</span><br><span class="line"></span><br><span class="line">System.out.println(i1);</span><br><span class="line">System.out.println(i2);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结束</span></span><br><span class="line">pool.shutdown();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyCallable</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> number;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyCallable</span><span class="params">(<span class="keyword">int</span> number)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.number = number;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> x = <span class="number">1</span>; x &lt;= number; x++) &#123;</span><br><span class="line">			sum += x;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sum;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>多线程程序实现的方式3的好处和弊端</p>
+<ul>
+<li><p>好处：</p>
+<ul>
+<li>可以有返回值</li>
+<li>可以抛出异常</li>
+</ul>
+</li>
+<li><p>弊端：</p>
+<ul>
+<li>代码比较复杂，所以一般不用</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>###25.11_设计模式(简单工厂模式概述和使用)(了解)</p>
+<ul>
+<li>A:简单工厂模式概述<ul>
+<li>又叫静态工厂方法模式，它定义一个具体的工厂类负责创建一些类的实例</li>
+</ul>
+</li>
+<li>B:优点<ul>
+<li>客户端不需要在负责对象的创建，从而明确了各个类的职责</li>
+</ul>
+</li>
+<li>C:缺点<ul>
+<li>这个静态工厂类负责所有对象的创建，如果有新的对象增加，或者某些对象的创建方式不同，就需要不断的修改工厂类，不利于后期的维护</li>
+</ul>
+</li>
+<li>D:案例演示<ul>
+<li>动物抽象类：public abstract Animal { public abstract void eat(); }</li>
+<li>具体狗类：public class Dog extends Animal {}</li>
+<li>具体猫类：public class Cat extends Animal {}</li>
+<li>开始，在测试类中每个具体的内容自己创建对象，但是，创建对象的工作如果比较麻烦，就需要有人专门做这个事情，所以就知道了一个专门的类来创建对象。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AnimalFactory</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">AnimalFactory</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//public static Dog createDog() &#123;return new Dog();&#125;</span></span><br><span class="line">	<span class="comment">//public static Cat createCat() &#123;return new Cat();&#125;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//改进</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Animal <span class="title">createAnimal</span><span class="params">(String animalName)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(“dog”.equals(animalName)) &#123;&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(“cat”.equals(animale)) &#123;</span><br><span class="line"></span><br><span class="line">		&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/多线程/" rel="tag"># 多线程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/12/05/java基础巩固之多线程安全-4/" rel="next" title="java基础巩固之多线程安全(5)">
+                <i class="fa fa-chevron-left"></i> java基础巩固之多线程安全(5)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/12/28/Java基础巩固之设计模式-4/" rel="prev" title="java 历史版本新特性">
+                java 历史版本新特性 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">iOS阿俊</p>
+              <p class="site-description motion-element" itemprop="description">iOS and Java Developer</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/ChinaArJun" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:llxwxx@gmail.com" target="_blank" title="Email">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>Email</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://juejin.im/user/59c7c15b6fb9a00a554faf08" target="_blank" title="掘金">
+                      
+                        <i class="fa fa-fw fa-globe"></i>掘金</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.jianshu.com/u/f5a7b66b1a03" target="_blank" title="简书">
+                      
+                        <i class="fa fa-fw fa-globe"></i>简书</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-单例"><span class="nav-number">1.</span> <span class="nav-text">多线程-单例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-Runtime类"><span class="nav-number">2.</span> <span class="nav-text">多线程-Runtime类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-Timer"><span class="nav-number">3.</span> <span class="nav-text">多线程-Timer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-两个线程间的通信"><span class="nav-number">4.</span> <span class="nav-text">多线程-两个线程间的通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-三个或三个以上间的线程通信"><span class="nav-number">5.</span> <span class="nav-text">多线程-三个或三个以上间的线程通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-JDK1-5的新特性互斥锁"><span class="nav-number">6.</span> <span class="nav-text">多线程-JDK1.5的新特性互斥锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-线程组的概述和使用"><span class="nav-number">7.</span> <span class="nav-text">多线程-线程组的概述和使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-线程的五种状态"><span class="nav-number">8.</span> <span class="nav-text">多线程-线程的五种状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-线程池的概述和使用"><span class="nav-number">9.</span> <span class="nav-text">多线程-线程池的概述和使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多线程-多线程程序实现的方式3"><span class="nav-number">10.</span> <span class="nav-text">多线程-多线程程序实现的方式3</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  © 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">iOS阿俊</span>
+<script src="https://s5.cnzz.com/z_stat.php?id=1275379724&web_id=1275379724" language="JavaScript"></script>
+</div>
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("WYOj8y3I3yXSB2u3fz4TSTQ9-gzGzoHsz", "YN9r9OWJvbTPssfBgFNi06Yg");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
